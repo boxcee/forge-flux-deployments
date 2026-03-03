@@ -5,7 +5,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
  * Expects signature in format: sha256=<hex>
  */
 export function verifyHmac(body, signature, secret) {
-  if (!signature || !signature.startsWith('sha256=')) {
+  if (!secret || !signature || !signature.startsWith('sha256=')) {
     return false;
   }
 

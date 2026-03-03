@@ -1,5 +1,5 @@
 import { verifyHmac } from './hmac.js';
-import { extractMetadata, mapReasonToState, buildDeploymentPayload, IGNORED_REASONS } from './mapper.js';
+import { extractMetadata, buildDeploymentPayload, IGNORED_REASONS } from './mapper.js';
 import { submitDeployment } from './jira.js';
 
 export const handleFluxEvent = async (event) => {
@@ -58,6 +58,6 @@ export const handleFluxEvent = async (event) => {
     };
   } catch (err) {
     console.error('Jira API call failed', err.message);
-    return { statusCode: 502, body: err.message };
+    return { statusCode: 502, body: 'Upstream API error' };
   }
 };

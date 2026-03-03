@@ -42,4 +42,14 @@ describe('verifyHmac', () => {
     const raw = createHmac('sha256', SECRET).update(body).digest('hex');
     expect(verifyHmac(body, raw, SECRET)).toBe(false);
   });
+
+  test('returns false when secret is undefined', () => {
+    const body = '{"test": true}';
+    expect(verifyHmac(body, 'sha256=abc', undefined)).toBe(false);
+  });
+
+  test('returns false when secret is empty string', () => {
+    const body = '{"test": true}';
+    expect(verifyHmac(body, 'sha256=abc', '')).toBe(false);
+  });
 });
