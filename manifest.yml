@@ -1,0 +1,28 @@
+modules:
+  webtrigger:
+    - key: flux-webhook
+      function: handleFluxEvent
+      response:
+        type: dynamic
+
+  devops:deploymentInfoProvider:
+    - key: flux-deployment-provider
+      name:
+        value: FluxCD Deployments
+      homeUrl: https://fluxcd.io
+      logoUrl: https://raw.githubusercontent.com/fluxcd/website/main/static/img/flux-icon.svg
+      documentationUrl: https://fluxcd.io/flux/components/notification/
+
+  function:
+    - key: handleFluxEvent
+      handler: index.handleFluxEvent
+
+permissions:
+  scopes:
+    - write:deployment:jira-software
+    - read:deployment:jira-software
+
+app:
+  runtime:
+    name: nodejs22.x
+  id: ari:cloud:ecosystem::app/placeholder
