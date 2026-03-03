@@ -1,0 +1,22 @@
+{
+  "involvedObject": {
+    "apiVersion": "helm.toolkit.fluxcd.io/v2",
+    "kind": "HelmRelease",
+    "name": "my-app",
+    "namespace": "production",
+    "uid": "7d0cdc51-ddcf-4743-b223-83ca5c699632"
+  },
+  "metadata": {
+    "helm.toolkit.fluxcd.io/chart-version": "1.4.2",
+    "helm.toolkit.fluxcd.io/app-version": "2.3.0",
+    "event.toolkit.fluxcd.io/jira": "DPS-123,DPS-456",
+    "event.toolkit.fluxcd.io/env": "production",
+    "event.toolkit.fluxcd.io/env-type": "production",
+    "event.toolkit.fluxcd.io/url": "https://github.com/org/repo"
+  },
+  "severity": "info",
+  "reason": "UpgradeSucceeded",
+  "message": "Helm upgrade succeeded for release production/my-app.v3 with chart my-chart@1.4.2",
+  "reportingController": "helm-controller",
+  "timestamp": "2026-03-03T14:00:00Z"
+}
