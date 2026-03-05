@@ -1,0 +1,10 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: jira-deployments
+  namespace: flux-system
+spec:
+  type: generic-hmac
+  address: "https://68338fcf-dcfc-42e0-bfdd-84f903daf321.hello.atlassian-dev.net/x1/912yn32fcjl6hk7h1vXgxW_SgH0"
+  secretRef:
+    name: jira-webhook-hmac
