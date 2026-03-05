@@ -27,17 +27,23 @@ export function mapReasonToState(reason) {
 export function extractMetadata(event) {
   const meta = event.metadata ?? {};
 
-  const jiraRaw = meta['event.toolkit.fluxcd.io/jira'];
+  // Flux strips annotation prefixes in webhook payloads:
+  //   "event.toolkit.fluxcd.io/jira" → "jira"
+  //   "helm.toolkit.fluxcd.io/chart-version" → "revision"
+  // Support both full and short keys for compatibility.
+  const get = (full, short) => meta[full] ?? meta[short] ?? null;
+
+  const jiraRaw = get('event.toolkit.fluxcd.io/jira', 'jira');
   const issueKeys = jiraRaw
     ? jiraRaw.split(',').map((k) => k.trim()).filter(Boolean)
     : null;
 
   return {
     issueKeys,
-    env: meta['event.toolkit.fluxcd.io/env'] ?? null,
-    envType: meta['event.toolkit.fluxcd.io/env-type'] ?? 'unmapped',
-    chartVersion: meta['helm.toolkit.fluxcd.io/chart-version'] ?? null,
-    url: meta['event.toolkit.fluxcd.io/url'] ?? '',
+    env: get('event.toolkit.fluxcd.io/env', 'env'),
+    envType: get('event.toolkit.fluxcd.io/env-type', 'env-type') ?? 'unmapped',
+    chartVersion: get('helm.toolkit.fluxcd.io/chart-version', 'revision'),
+    url: get('event.toolkit.fluxcd.io/url', 'url') ?? '',
     helmReleaseName: event.involvedObject?.name ?? 'unknown',
     namespace: event.involvedObject?.namespace ?? 'default',
   };

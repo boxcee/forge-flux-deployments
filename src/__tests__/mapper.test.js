@@ -127,6 +127,50 @@ describe('extractMetadata', () => {
     expect(result.helmReleaseName).toBe('my-app');
     expect(result.namespace).toBe('production');
   });
+
+  describe('short keys (Flux strips annotation prefixes)', () => {
+    const shortKeyEvent = {
+      involvedObject: { name: 'podinfo', namespace: 'flux-system' },
+      metadata: {
+        jira: 'KAN-2',
+        env: 'test',
+        'env-type': 'testing',
+        url: 'https://github.com/org/repo',
+        revision: '6.6.2',
+      },
+    };
+
+    test('extracts issue keys from short key', () => {
+      expect(extractMetadata(shortKeyEvent).issueKeys).toEqual(['KAN-2']);
+    });
+
+    test('extracts env from short key', () => {
+      expect(extractMetadata(shortKeyEvent).env).toBe('test');
+    });
+
+    test('extracts envType from short key', () => {
+      expect(extractMetadata(shortKeyEvent).envType).toBe('testing');
+    });
+
+    test('extracts url from short key', () => {
+      expect(extractMetadata(shortKeyEvent).url).toBe('https://github.com/org/repo');
+    });
+
+    test('extracts chartVersion from revision short key', () => {
+      expect(extractMetadata(shortKeyEvent).chartVersion).toBe('6.6.2');
+    });
+
+    test('full keys take precedence over short keys', () => {
+      const event = {
+        involvedObject: { name: 'app', namespace: 'ns' },
+        metadata: {
+          'event.toolkit.fluxcd.io/jira': 'FULL-1',
+          jira: 'SHORT-1',
+        },
+      };
+      expect(extractMetadata(event).issueKeys).toEqual(['FULL-1']);
+    });
+  });
 });
 
 describe('buildDeploymentPayload', () => {
