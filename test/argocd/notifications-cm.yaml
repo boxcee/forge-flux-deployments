@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  service.webhook.jira-deployments: |
+    url: https://68338fcf-dcfc-42e0-bfdd-84f903daf321.hello.atlassian-dev.net/x1/ZSsxDa3W-I01hkjnqiEnQKFLavk
+    headers:
+      - name: Authorization
+        value: Bearer e2e-test-token-2026
+      - name: Content-Type
+        value: application/json
+
+  template.jira-deployment: |
+    webhook:
+      jira-deployments:
+        method: POST
+        body: |
+          {{- $ann := .app.metadata.annotations -}}
+          {"app":"{{.app.metadata.name}}","namespace":"{{.app.spec.destination.namespace}}","revision":"{{.app.status.sync.revision}}","phase":"{{.app.status.operationState.phase}}","healthStatus":"{{.app.status.health.status}}","message":"{{.app.status.operationState.message}}","finishedAt":"{{.app.status.operationState.finishedAt}}","annotations":{"jira":"{{index $ann "jira"}}","env":"{{index $ann "env"}}","envType":"{{index $ann "envType"}}","url":"{{index $ann "url"}}"}}
+
+  trigger.on-deployed: |
+    - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      oncePer: app.status.sync.revision
+      send: [jira-deployment]
+
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      send: [jira-deployment]
