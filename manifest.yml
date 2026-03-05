@@ -4,6 +4,10 @@ modules:
       function: handleFluxEvent
       response:
         type: dynamic
+    - key: argo-webhook
+      function: handleArgoEvent
+      response:
+        type: dynamic
 
   devops:deploymentInfoProvider:
     - key: flux-deployment-provider
@@ -12,10 +16,18 @@ modules:
       homeUrl: https://fluxcd.io
       logoUrl: https://raw.githubusercontent.com/fluxcd/website/main/static/img/flux-icon.svg
       documentationUrl: https://fluxcd.io/flux/components/notification/
+    - key: argo-deployment-provider
+      name:
+        value: ArgoCD Deployments
+      homeUrl: https://argoproj.github.io/cd/
+      logoUrl: https://raw.githubusercontent.com/argoproj/argo-cd/master/docs/assets/logo.png
+      documentationUrl: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/
 
   function:
     - key: handleFluxEvent
       handler: index.handleFluxEvent
+    - key: handleArgoEvent
+      handler: index.handleArgoEvent
 
 permissions:
   scopes:
