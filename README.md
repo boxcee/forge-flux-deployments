@@ -1,6 +1,6 @@
 # forge-flux-deployments
 
-Atlassian Forge app that receives FluxCD webhook events and creates Jira deployment records.
+Atlassian Forge app that receives FluxCD and ArgoCD webhook events and creates Jira deployment records.
 
 ## Prerequisites
 
@@ -27,8 +27,11 @@ forge login
 # 2. Register the app (replaces placeholder app ID in manifest.yml)
 forge register
 
-# 3. Set the HMAC shared secret
+# 3a. Set the HMAC shared secret (FluxCD)
 forge variables set --environment development WEBHOOK_SECRET '<your-secret>'
+
+# 3b. Set the ArgoCD bearer token
+forge variables set --environment development ARGOCD_WEBHOOK_TOKEN '<your-token>'
 
 # 4. Deploy
 forge deploy --environment development
@@ -36,8 +39,12 @@ forge deploy --environment development
 # 5. Install on your Jira site
 forge install --environment development --site <your-site>.atlassian.net --product jira
 
-# 6. Get the webtrigger URL (save this for FluxCD and manual testing)
+# 6. Get the webtrigger URLs
+# For FluxCD:
 forge webtrigger create --functionKey flux-webhook
+
+# For ArgoCD:
+forge webtrigger create --functionKey argo-webhook
 
 # To list existing webtrigger URLs:
 forge webtrigger list
@@ -132,6 +139,95 @@ flux reconcile helmrelease <name> -n <namespace>
 ```
 
 Check the Jira issue — the Deployments panel should show the deployment with the correct state.
+
+## ArgoCD Integration
+
+### 1. Set the bearer token in Forge
+
+```bash
+forge variables set --environment development ARGOCD_WEBHOOK_TOKEN '<your-token>'
+```
+
+### 2. Get the ArgoCD webtrigger URL
+
+```bash
+forge webtrigger create --functionKey argo-webhook
+```
+
+### 3. Configure ArgoCD Notifications
+
+Add the webhook service and template to your `argocd-notifications-cm` ConfigMap:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  service.webhook.jira-deployments: |
+    url: <argo-webhook-webtrigger-url>
+    headers:
+      - name: Authorization
+        value: Bearer <your-token>
+      - name: Content-Type
+        value: application/json
+
+  template.jira-deployment: |
+    webhook:
+      jira-deployments:
+        method: POST
+        body: |
+          {
+            "app": "{{.app.metadata.name}}",
+            "namespace": "{{.app.spec.destination.namespace}}",
+            "revision": "{{.app.status.sync.revision}}",
+            "phase": "{{.app.status.operationState.phase}}",
+            "healthStatus": "{{.app.status.health.status}}",
+            "message": "{{.app.status.operationState.message}}",
+            "finishedAt": "{{.app.status.operationState.finishedAt}}",
+            "annotations": {
+              "jira": "{{index .app.metadata.annotations \"jira\"}}",
+              "env": "{{index .app.metadata.annotations \"env\"}}",
+              "envType": "{{index .app.metadata.annotations \"envType\"}}",
+              "url": "{{index .app.metadata.annotations \"url\"}}"
+            }
+          }
+
+  trigger.on-deployed: |
+    - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      oncePer: app.status.sync.revision
+      send: [jira-deployment]
+
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      send: [jira-deployment]
+```
+
+### 4. Annotate your ArgoCD Application
+
+| Annotation | Required | Description |
+|---|---|---|
+| `jira` | Yes | Comma-separated Jira issue keys (e.g., `PROJ-123,PROJ-456`) |
+| `env` | Yes | Environment name (e.g., `staging`, `production`) |
+| `envType` | No | Jira environment type: `unmapped`, `development`, `testing`, `staging`, `production` (default: `unmapped`) |
+| `url` | Yes | URL shown in the Jira deployment record |
+
+```bash
+kubectl annotate application <name> -n argocd \
+  jira='PROJ-123' \
+  env='production' \
+  envType='production' \
+  url='https://argocd.example.com/applications/my-app'
+```
+
+### 5. Subscribe the Application to triggers
+
+```bash
+kubectl annotate application <name> -n argocd \
+  notifications.argoproj.io/subscribe.on-deployed.jira-deployments="" \
+  notifications.argoproj.io/subscribe.on-sync-failed.jira-deployments=""
+```
 
 ## Local E2E Testing with kind
 
