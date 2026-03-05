@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { deterministicId, parseIssueKeys } from './shared.js';
 
 const PHASE_TO_STATE = {
   Succeeded: 'successful',
@@ -7,8 +7,6 @@ const PHASE_TO_STATE = {
   Running: 'in_progress',
 };
 
-export const IGNORED_PHASES = new Set([]);
-
 export function mapPhaseToState(phase, _healthStatus) {
   return PHASE_TO_STATE[phase] ?? 'unknown';
 }
@@ -16,13 +14,8 @@ export function mapPhaseToState(phase, _healthStatus) {
 export function extractMetadata(payload) {
   const annotations = payload.annotations ?? {};
 
-  const jiraRaw = annotations.jira ?? null;
-  const issueKeys = jiraRaw
-    ? jiraRaw.split(',').map((k) => k.trim()).filter(Boolean)
-    : null;
-
   return {
-    issueKeys,
+    issueKeys: parseIssueKeys(annotations.jira),
     env: annotations.env ?? null,
     envType: annotations.envType ?? 'unmapped',
     revision: payload.revision ?? null,
@@ -32,14 +25,8 @@ export function extractMetadata(payload) {
   };
 }
 
-function deterministicId(name, namespace, revision, timestamp) {
-  const input = `${name}:${namespace}:${revision}:${timestamp}`;
-  const hash = createHash('sha256').update(input).digest('hex');
-  return parseInt(hash.substring(0, 8), 16);
-}
-
-export function buildDeploymentPayload(argoPayload) {
-  const meta = extractMetadata(argoPayload);
+export function buildDeploymentPayload(argoPayload, meta) {
+  if (!meta) meta = extractMetadata(argoPayload);
   const state = mapPhaseToState(argoPayload.phase, argoPayload.healthStatus);
   const shortRevision = (meta.revision ?? 'unknown').substring(0, 7);
 

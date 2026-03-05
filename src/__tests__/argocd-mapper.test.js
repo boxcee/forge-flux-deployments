@@ -3,7 +3,6 @@ import {
   mapPhaseToState,
   extractMetadata,
   buildDeploymentPayload,
-  IGNORED_PHASES,
 } from '../argocd-mapper.js';
 
 describe('mapPhaseToState', () => {
@@ -20,12 +19,6 @@ describe('mapPhaseToState', () => {
     ['SomethingNew', 'Healthy', 'unknown'],
   ])('maps phase=%s health=%s to %s', (phase, health, expected) => {
     expect(mapPhaseToState(phase, health)).toBe(expected);
-  });
-});
-
-describe('IGNORED_PHASES', () => {
-  test('is empty by default (no ArgoCD phases are ignored yet)', () => {
-    expect(IGNORED_PHASES.size).toBe(0);
   });
 });
 

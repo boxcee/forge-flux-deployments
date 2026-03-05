@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { deterministicId, parseIssueKeys } from './shared.js';
 
 const REASON_TO_STATE = {
   InstallSucceeded: 'successful',
@@ -33,13 +33,8 @@ export function extractMetadata(event) {
   // Support both full and short keys for compatibility.
   const get = (full, short) => meta[full] ?? meta[short] ?? null;
 
-  const jiraRaw = get('event.toolkit.fluxcd.io/jira', 'jira');
-  const issueKeys = jiraRaw
-    ? jiraRaw.split(',').map((k) => k.trim()).filter(Boolean)
-    : null;
-
   return {
-    issueKeys,
+    issueKeys: parseIssueKeys(get('event.toolkit.fluxcd.io/jira', 'jira')),
     env: get('event.toolkit.fluxcd.io/env', 'env'),
     envType: get('event.toolkit.fluxcd.io/env-type', 'env-type') ?? 'unmapped',
     chartVersion: get('helm.toolkit.fluxcd.io/chart-version', 'revision'),
@@ -49,15 +44,8 @@ export function extractMetadata(event) {
   };
 }
 
-function deterministicId(name, namespace, chartVersion, timestamp) {
-  const input = `${name}:${namespace}:${chartVersion}:${timestamp}`;
-  const hash = createHash('sha256').update(input).digest('hex');
-  // Take first 8 hex chars → fits in a 32-bit int range
-  return parseInt(hash.substring(0, 8), 16);
-}
-
-export function buildDeploymentPayload(fluxEvent) {
-  const meta = extractMetadata(fluxEvent);
+export function buildDeploymentPayload(fluxEvent, meta) {
+  if (!meta) meta = extractMetadata(fluxEvent);
   const state = mapReasonToState(fluxEvent.reason);
 
   const seqNum = deterministicId(

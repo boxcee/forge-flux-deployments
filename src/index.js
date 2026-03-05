@@ -4,6 +4,23 @@ import { submitDeployment } from './jira.js';
 import { verifyBearerToken } from './bearer.js';
 import { extractMetadata as extractArgoMetadata, buildDeploymentPayload as buildArgoPayload } from './argocd-mapper.js';
 
+async function submitAndRespond(payload) {
+  const result = await submitDeployment(payload);
+
+  if (result.rejectedDeployments?.length > 0) {
+    console.warn('Rejected deployments', result.rejectedDeployments);
+  }
+  if (result.unknownIssueKeys?.length > 0) {
+    console.warn('Unknown issue keys', result.unknownIssueKeys);
+  }
+
+  return {
+    statusCode: 200,
+    headers: { 'Content-Type': ['application/json'] },
+    body: JSON.stringify({ accepted: result.acceptedDeployments?.length ?? 0 }),
+  };
+}
+
 export const handleFluxEvent = async (event) => {
   // 1. Verify HMAC
   const signature = (event.headers?.['x-signature'] ?? [])[0];
@@ -41,23 +58,10 @@ export const handleFluxEvent = async (event) => {
   }
 
   // 6. Build and submit
-  const payload = buildDeploymentPayload(fluxEvent);
+  const payload = buildDeploymentPayload(fluxEvent, meta);
 
   try {
-    const result = await submitDeployment(payload);
-
-    if (result.rejectedDeployments?.length > 0) {
-      console.warn('Rejected deployments', result.rejectedDeployments);
-    }
-    if (result.unknownIssueKeys?.length > 0) {
-      console.warn('Unknown issue keys', result.unknownIssueKeys);
-    }
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': ['application/json'] },
-      body: JSON.stringify({ accepted: result.acceptedDeployments?.length ?? 0 }),
-    };
+    return await submitAndRespond(payload);
   } catch (err) {
     console.error('Jira API call failed', err.message);
     return { statusCode: 502, body: 'Upstream API error' };
@@ -95,23 +99,10 @@ export const handleArgoEvent = async (event) => {
   }
 
   // 5. Build and submit
-  const payload = buildArgoPayload(argoEvent);
+  const payload = buildArgoPayload(argoEvent, meta);
 
   try {
-    const result = await submitDeployment(payload);
-
-    if (result.rejectedDeployments?.length > 0) {
-      console.warn('Rejected deployments', result.rejectedDeployments);
-    }
-    if (result.unknownIssueKeys?.length > 0) {
-      console.warn('Unknown issue keys', result.unknownIssueKeys);
-    }
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': ['application/json'] },
-      body: JSON.stringify({ accepted: result.acceptedDeployments?.length ?? 0 }),
-    };
+    return await submitAndRespond(payload);
   } catch (err) {
     console.error('Jira API call failed', err.message);
     return { statusCode: 502, body: 'Upstream API error' };
