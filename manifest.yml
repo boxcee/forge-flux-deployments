@@ -39,3 +39,5 @@ app:
   runtime:
     name: nodejs22.x
   id: ari:cloud:ecosystem::app/68338fcf-dcfc-42e0-bfdd-84f903daf321
+  licensing:
+    enabled: true
