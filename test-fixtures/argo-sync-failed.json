@@ -1,0 +1,15 @@
+{
+  "app": "my-service",
+  "namespace": "staging",
+  "revision": "deadbeef1234567890abcdef1234567890abcdef",
+  "phase": "Failed",
+  "healthStatus": "Degraded",
+  "message": "ComparisonError: failed to sync: resource my-service/Deployment not found",
+  "finishedAt": "2026-03-05T12:05:00Z",
+  "annotations": {
+    "jira": "PROJ-789",
+    "env": "staging",
+    "envType": "staging",
+    "url": "https://argocd.example.com/applications/my-service"
+  }
+}
