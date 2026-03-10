@@ -1,7 +1,7 @@
 title: GitOps Deployments for Jira
 description: Track FluxCD and ArgoCD deployments directly in Jira issues.
 theme: jekyll-theme-minimal
-logo: /assets/icon.png
+logo: ./assets/icon.png
 show_downloads: true
 google_analytics: 
 remote_theme: pages-themes/minimal@v0.2.0
