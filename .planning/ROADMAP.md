@@ -59,11 +59,11 @@ Plans:
   3. Privacy policy covers data collection, storage, third-party sharing, and data deletion -- consistent with the app being stateless and Forge-hosted
   4. Terms of service covers liability, termination, and acceptable use
   5. Privacy & Security tab answers are drafted in a document, aligned with what the privacy policy states
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md -- Enhance privacy policy and terms of service with all Marketplace-required sections
+- [ ] 03-02-PLAN.md -- Draft complete Privacy & Security tab answers and update legal URLs in marketplace-listing.md
 
 ### Phase 4: Marketplace Listing
 **Goal**: Marketplace listing materials are complete with real URLs, accurate copy, and a conforming app icon -- ready to paste into the Marketplace portal
@@ -88,5 +88,5 @@ Note: Phase 2 and Phase 3 can execute in parallel (both depend only on Phase 1).
 |-------|----------------|--------|-----------|
 | 1. Site Foundation | 0/2 | Planning complete | - |
 | 2. Content Accuracy | 1/2 | In Progress|  |
-| 3. Legal & Compliance | 0/? | Not started | - |
+| 3. Legal & Compliance | 0/2 | Planning complete | - |
 | 4. Marketplace Listing | 0/? | Not started | - |
