@@ -73,10 +73,10 @@ Plans:
   1. marketplace-listing.md contains zero TODO placeholders -- all URLs point to live GitHub Pages
   2. Listing description, summary, and highlights accurately describe what the app does (cross-checked against source code and setup guide)
   3. App icon meets Atlassian Marketplace specifications (correct dimensions, format, no trademarked imagery)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md -- Cross-check listing accuracy against source code, verify URLs, confirm icon selection
 
 ## Progress
 
@@ -89,4 +89,4 @@ Note: Phase 2 and Phase 3 can execute in parallel (both depend only on Phase 1).
 | 1. Site Foundation | 0/2 | Planning complete | - |
 | 2. Content Accuracy | 1/2 | In Progress|  |
 | 3. Legal & Compliance | 2/2 | Complete   | 2026-03-11 |
-| 4. Marketplace Listing | 0/? | Not started | - |
+| 4. Marketplace Listing | 0/1 | Not started | - |
