@@ -17,7 +17,7 @@
 - [x] **LEGL-02**: Terms of service/EULA is accessible at a live GitHub Pages URL
 - [x] **LEGL-03**: Privacy policy content is reviewed for Marketplace compliance completeness
 - [x] **LEGL-04**: Terms of service content is reviewed for Marketplace compliance completeness
-- [ ] **LEGL-05**: Privacy & Security tab answers are drafted for Marketplace submission
+- [x] **LEGL-05**: Privacy & Security tab answers are drafted for Marketplace submission
 
 ### Marketplace Listing
 
@@ -74,7 +74,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEGL-02 | Phase 3: Legal & Compliance | Complete |
 | LEGL-03 | Phase 3: Legal & Compliance | Complete |
 | LEGL-04 | Phase 3: Legal & Compliance | Complete |
-| LEGL-05 | Phase 3: Legal & Compliance | Pending |
+| LEGL-05 | Phase 3: Legal & Compliance | Complete |
 | MRKT-01 | Phase 4: Marketplace Listing | Pending |
 | MRKT-02 | Phase 4: Marketplace Listing | Pending |
 | MRKT-03 | Phase 4: Marketplace Listing | Pending |

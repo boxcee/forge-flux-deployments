@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Site Foundation** - Migrate to just-the-docs theme with working navigation, deploy GitHub Pages, create root README
 - [ ] **Phase 2: Content Accuracy** - Cross-check all documentation against source code, add troubleshooting page
-- [ ] **Phase 3: Legal & Compliance** - Get legal docs live at GitHub Pages URLs, review for Marketplace compliance, draft P&S tab answers
+- [x] **Phase 3: Legal & Compliance** - Get legal docs live at GitHub Pages URLs, review for Marketplace compliance, draft P&S tab answers (completed 2026-03-11)
 - [ ] **Phase 4: Marketplace Listing** - Replace TODO placeholders with live URLs, finalize listing copy and icon
 
 ## Phase Details
@@ -88,5 +88,5 @@ Note: Phase 2 and Phase 3 can execute in parallel (both depend only on Phase 1).
 |-------|----------------|--------|-----------|
 | 1. Site Foundation | 0/2 | Planning complete | - |
 | 2. Content Accuracy | 1/2 | In Progress|  |
-| 3. Legal & Compliance | 1/2 | In Progress|  |
+| 3. Legal & Compliance | 2/2 | Complete   | 2026-03-11 |
 | 4. Marketplace Listing | 0/? | Not started | - |
