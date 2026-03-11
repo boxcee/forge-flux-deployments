@@ -40,7 +40,7 @@ created: 2026-03-11
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 02-01-* | 01 | 1 | ACCY-01 | manual-only | `npm test` (no source changes) | N/A | ⬜ pending |
 | 02-01-* | 01 | 1 | ACCY-02 | manual-only | `npm test` (no source changes) | N/A | ⬜ pending |
-| 02-02-* | 02 | 1 | ACCY-03 | manual-only | `npm test` (no source changes) | N/A | ⬜ pending |
+| 02-01-* | 01 | 1 | ACCY-03 | manual-only | `npm test` (no source changes) | N/A | ⬜ pending |
 | 02-02-* | 02 | 1 | SITE-03 | manual-only | `npm test` (no source changes) | N/A | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
