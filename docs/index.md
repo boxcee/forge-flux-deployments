@@ -1,23 +1,37 @@
+---
+title: Home
+nav_order: 1
+description: "Track FluxCD and ArgoCD deployments directly in Jira issues."
+---
+
 # GitOps Deployments for Jira
 
-Track FluxCD and ArgoCD deployments directly in Jira issues. See deployment status, environment, and revision in the native panel — no polling required.
+Track FluxCD and ArgoCD deployments directly in Jira issues. See deployment status, environment, and version in the native Deployments panel -- no polling, no extra dashboards.
 
----
+## Supported CD Tools
 
-## Documentation
+- **FluxCD** -- HMAC-authenticated webhooks via the Flux notification controller.
+- **ArgoCD** -- Bearer token webhooks via ArgoCD notifications.
 
-- [Getting Started & Setup Guide](./setup)
-- [How it works & Screenshots](./)
+## How it works
 
-## Legal & Privacy
+1. Install the app from the Atlassian Marketplace
+2. Configure your CD tool to send webhook events
+3. Annotate your resources with Jira issue keys
+4. See deployments appear in Jira's native panel
 
-- [Privacy Policy](./privacy-policy)
-- [Terms of Service](./terms-of-service)
+## Deployment States
 
-## Support
+The app maps CD tool events to these Jira deployment states:
 
-If you have questions or need support, please open an issue on our [GitHub repository](https://github.com/boxcee/forge-flux-deployments/issues).
+| State | Description |
+|-------|-------------|
+| `successful` | Deployment completed successfully |
+| `failed` | Deployment failed |
+| `in_progress` | Deployment is in progress |
+| `rolled_back` | Deployment was rolled back |
 
----
+## Get Started
 
-© 2026 GitOps Deployments for Jira
+- [Setup Guide](./setup) -- connect your CD tool to Jira
+- [GitHub Issues](https://github.com/boxcee/forge-flux-deployments/issues) -- questions and support
