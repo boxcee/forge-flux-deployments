@@ -9,7 +9,7 @@
 
 - [x] **SITE-01**: Site uses just-the-docs theme with sidebar navigation and search
 - [x] **SITE-02**: All pages render correctly on GitHub Pages with working links
-- [ ] **SITE-03**: Troubleshooting page covers common issues (auth failures, missing annotations, ignored reasons)
+- [x] **SITE-03**: Troubleshooting page covers common issues (auth failures, missing annotations, ignored reasons)
 
 ### Legal & Compliance
 
@@ -69,7 +69,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | SITE-01 | Phase 1: Site Foundation | Complete |
 | SITE-02 | Phase 1: Site Foundation | Complete |
-| SITE-03 | Phase 2: Content Accuracy | Pending |
+| SITE-03 | Phase 2: Content Accuracy | Complete |
 | LEGL-01 | Phase 3: Legal & Compliance | Pending |
 | LEGL-02 | Phase 3: Legal & Compliance | Pending |
 | LEGL-03 | Phase 3: Legal & Compliance | Pending |
