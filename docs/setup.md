@@ -103,8 +103,17 @@ Trigger a HelmRelease reconciliation and check `forge logs` for a 200 response.
 
 ## 3. ArgoCD Configuration
 
-### A. Configure Notifications
-Add the webhook service to your `argocd-notifications-cm` ConfigMap.
+### A. Set the webhook token
+
+Set the bearer token in your Forge environment. This is checked against the `Authorization: Bearer <token>` header on incoming webhooks. Without it, all webhooks return 401.
+
+```bash
+forge variables set ARGOCD_WEBHOOK_TOKEN '<your-token>'
+```
+
+### B. Configure the webhook service
+
+Add the webhook service to your `argocd-notifications-cm` ConfigMap:
 
 ```yaml
 data:
@@ -117,7 +126,10 @@ data:
         value: application/json
 ```
 
-### B. Define the Template
+### C. Define the notification template
+
+The template body must include all fields the app reads. Missing fields result in incomplete deployment records.
+
 ```yaml
 template.jira-deployment: |
   webhook:
@@ -130,13 +142,52 @@ template.jira-deployment: |
           "revision": "{{.app.status.sync.revision}}",
           "phase": "{{.app.status.operationState.phase}}",
           "healthStatus": "{{.app.status.health.status}}",
+          "finishedAt": "{{.app.status.operationState.finishedAt}}",
+          "message": "{{.app.status.operationState.message}}",
           "annotations": {
             "jira": "{{index .app.metadata.annotations \"jira\"}}",
             "env": "{{index .app.metadata.annotations \"env\"}}",
+            "envType": "{{index .app.metadata.annotations \"envType\"}}",
             "url": "{{index .app.metadata.annotations \"url\"}}"
           }
         }
 ```
+
+### D. Configure the trigger
+
+Add a trigger that fires on sync state changes:
+
+```yaml
+trigger.on-sync-status: |
+  - when: app.status.operationState.phase in ['Succeeded', 'Failed', 'Error', 'Running']
+    send: [jira-deployment]
+```
+
+### E. Annotate your Application
+
+Subscribe the Application to the notification trigger and add the deployment metadata annotations:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-status.jira-deployments: ""
+    jira: "PROJ-123"
+    env: "production"
+    envType: "production"
+    url: "https://argocd.example.com/applications/my-app"
+```
+
+> **Note:** ArgoCD uses flat annotation keys (no prefix stripping). `envType` is camelCase, not hyphenated like FluxCD's `env-type`.
+
+### F. Verify it works
+
+Trigger a sync and check `forge logs` for a 200 response.
+
+- **200** -- Deployment record created in Jira.
+- **204** -- Event was skipped. Check that `jira` and `env` annotations are set.
+- **401** -- Bearer token verification failed. Verify that `ARGOCD_WEBHOOK_TOKEN` matches the token in the `Authorization` header.
 
 ---
 
@@ -158,10 +209,33 @@ template.jira-deployment: |
 
 ### ArgoCD Annotations
 
-For deployments to appear in Jira, you must annotate your resources with the relevant Jira issue keys.
+| Annotation | Required | Default | Description |
+|---|---|---|---|
+| `jira` | Yes | -- | Comma-separated Jira issue keys. If missing, event is silently skipped (204). |
+| `env` | Yes | -- | Environment name. Returns 400 if missing. |
+| `envType` | No | `unmapped` | Jira environment type. Valid values: `unmapped`, `development`, `testing`, `staging`, `production`. Note: camelCase, not hyphenated. |
+| `url` | No | `''` | URL shown in Jira deployment panel. Recommended. |
 
-| Annotation | Description | Example |
+#### ArgoCD payload fields
+
+The notification template sends these top-level fields:
+
+| Field | Source | Description |
 |---|---|---|
-| `jira` | Comma-separated Jira issue keys | `PROJ-123,PROJ-456` |
-| `env` | Environment name | `production` |
-| `url` | A link to show in Jira | `https://github.com/my-org/repo` |
+| `app` | `.app.metadata.name` | Application name, used as pipeline ID. |
+| `namespace` | `.app.spec.destination.namespace` | Target namespace. |
+| `revision` | `.app.status.sync.revision` | Git revision (first 7 chars used as label). |
+| `phase` | `.app.status.operationState.phase` | Sync operation phase. Determines Jira deployment state. |
+| `healthStatus` | `.app.status.health.status` | Application health status. |
+| `finishedAt` | `.app.status.operationState.finishedAt` | Timestamp used for deployment ordering. |
+| `message` | `.app.status.operationState.message` | Operation message, used as deployment description. |
+
+**Phase to Jira state mapping:**
+
+| ArgoCD Phase | Jira Deployment State |
+|---|---|
+| `Succeeded` | `successful` |
+| `Failed` | `failed` |
+| `Error` | `failed` |
+| `Running` | `in_progress` |
+| Other | `unknown` |
