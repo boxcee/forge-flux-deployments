@@ -21,9 +21,9 @@
 
 ### Marketplace Listing
 
-- [ ] **MRKT-01**: TODO placeholder URLs in marketplace-listing.md are replaced with live links
-- [ ] **MRKT-02**: Listing description, summary, and highlights are cross-checked for accuracy
-- [ ] **MRKT-03**: App icon meets Atlassian Marketplace size and format specifications
+- [x] **MRKT-01**: TODO placeholder URLs in marketplace-listing.md are replaced with live links
+- [x] **MRKT-02**: Listing description, summary, and highlights are cross-checked for accuracy
+- [x] **MRKT-03**: App icon meets Atlassian Marketplace size and format specifications
 
 ### Content Accuracy
 
@@ -75,9 +75,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEGL-03 | Phase 3: Legal & Compliance | Complete |
 | LEGL-04 | Phase 3: Legal & Compliance | Complete |
 | LEGL-05 | Phase 3: Legal & Compliance | Complete |
-| MRKT-01 | Phase 4: Marketplace Listing | Pending |
-| MRKT-02 | Phase 4: Marketplace Listing | Pending |
-| MRKT-03 | Phase 4: Marketplace Listing | Pending |
+| MRKT-01 | Phase 4: Marketplace Listing | Complete |
+| MRKT-02 | Phase 4: Marketplace Listing | Complete |
+| MRKT-03 | Phase 4: Marketplace Listing | Complete |
 | ACCY-01 | Phase 2: Content Accuracy | Complete |
 | ACCY-02 | Phase 2: Content Accuracy | Complete |
 | ACCY-03 | Phase 2: Content Accuracy | Complete |
