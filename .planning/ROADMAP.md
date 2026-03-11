@@ -43,11 +43,11 @@ Plans:
   2. ArgoCD setup instructions produce a payload format that matches what src/mapper.js expects
   3. Annotation reference table lists every annotation key for both FluxCD and ArgoCD, with correct descriptions matching code behavior
   4. Troubleshooting page exists covering HMAC auth failures, missing required annotations, and silently ignored event reasons
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md -- Rewrite setup.md FluxCD and ArgoCD sections to match source code, add complete annotation reference tables
+- [ ] 02-02-PLAN.md -- Write troubleshooting page covering all failure modes (401, 400, 204, 502)
 
 ### Phase 3: Legal & Compliance
 **Goal**: Privacy policy and terms of service are live at publicly accessible URLs and contain everything Atlassian Marketplace review requires
@@ -87,6 +87,6 @@ Note: Phase 2 and Phase 3 can execute in parallel (both depend only on Phase 1).
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Site Foundation | 0/2 | Planning complete | - |
-| 2. Content Accuracy | 0/? | Not started | - |
+| 2. Content Accuracy | 0/2 | Planning complete | - |
 | 3. Legal & Compliance | 0/? | Not started | - |
 | 4. Marketplace Listing | 0/? | Not started | - |
