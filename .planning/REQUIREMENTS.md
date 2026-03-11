@@ -27,9 +27,9 @@
 
 ### Content Accuracy
 
-- [ ] **ACCY-01**: Setup guide FluxCD instructions match actual source code behavior
-- [ ] **ACCY-02**: Setup guide ArgoCD instructions match actual payload format in code
-- [ ] **ACCY-03**: Annotation reference table is complete for both FluxCD and ArgoCD
+- [x] **ACCY-01**: Setup guide FluxCD instructions match actual source code behavior
+- [x] **ACCY-02**: Setup guide ArgoCD instructions match actual payload format in code
+- [x] **ACCY-03**: Annotation reference table is complete for both FluxCD and ArgoCD
 
 ### Repository
 
@@ -78,9 +78,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MRKT-01 | Phase 4: Marketplace Listing | Pending |
 | MRKT-02 | Phase 4: Marketplace Listing | Pending |
 | MRKT-03 | Phase 4: Marketplace Listing | Pending |
-| ACCY-01 | Phase 2: Content Accuracy | Pending |
-| ACCY-02 | Phase 2: Content Accuracy | Pending |
-| ACCY-03 | Phase 2: Content Accuracy | Pending |
+| ACCY-01 | Phase 2: Content Accuracy | Complete |
+| ACCY-02 | Phase 2: Content Accuracy | Complete |
+| ACCY-03 | Phase 2: Content Accuracy | Complete |
 | REPO-01 | Phase 1: Site Foundation | Complete |
 | REPO-02 | Phase 1: Site Foundation | Complete |
 
