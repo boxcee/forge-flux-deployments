@@ -15,7 +15,7 @@ GitOps Deployments for Jira connects your Kubernetes GitOps pipeline to Jira's n
 - **ArgoCD** — Application sync events via ArgoCD Notifications webhooks
 
 **What you get:**
-- Deployment status (successful, failed, in progress, rolled back) shown on Jira issues
+- Deployment status (successful, failed, rolled back) shown on Jira issues. ArgoCD additionally tracks in-progress deployments.
 - Environment tracking (development, staging, production)
 - Revision tracking (Helm chart versions for Flux, Git SHAs for Argo)
 - Direct links from Jira to your deployment dashboard or repository
@@ -147,3 +147,9 @@ The App is stateless and privacy-preserving. It processes deployment metadata (a
 | Security contact | https://github.com/boxcee/forge-flux-deployments/issues |
 | Privacy policy | https://boxcee.github.io/forge-flux-deployments/privacy-policy |
 | App permissions justification | See [API Scope Justification](#api-scope-justification) section above |
+
+## App Icon
+File: `docs/assets/icon.png`
+Dimensions: 144 x 144 px
+Format: PNG (RGBA)
+Background: Blue chiclet (rounded rectangle)
