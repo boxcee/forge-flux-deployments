@@ -50,10 +50,10 @@ No agents to install. No database. No external infrastructure. Runs entirely on 
 https://github.com/boxcee/forge-flux-deployments/issues
 
 ## Privacy Policy URL
-(TODO: create and host)
+https://boxcee.github.io/forge-flux-deployments/privacy-policy
 
 ## End User Terms URL
-(TODO: create and host)
+https://boxcee.github.io/forge-flux-deployments/terms-of-service
 
 ---
 
@@ -70,7 +70,80 @@ None. The app does not communicate with any external services. It receives inbou
 
 ## Privacy & Security Disclosures
 
-- **Personal data processed:** None. The app processes deployment metadata (app names, namespaces, revisions, Jira issue keys) only. No user PII is collected, stored, or transmitted.
-- **Data storage:** None. The app is stateless — it receives a webhook, transforms the payload, and forwards it to the Jira Deployments API in a single request.
-- **External connections:** None. All communication is inbound (webhooks) and to Jira (via Forge runtime).
-- **Personal Access Tokens:** Not required.
+The App is stateless and privacy-preserving. It processes deployment metadata (application names, Kubernetes namespaces, Helm chart versions, Git commit SHAs, Jira issue keys, environment names, deployment URLs) solely to transmit it to the Jira Deployments API. None of these data fields constitute PII. The App does not store, persist, or retain any data.
+
+### Data Storage & Processing
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your app store user data outside Atlassian? | No | The App is stateless with no database or persistent storage. All deployment metadata is processed in real-time within the Forge runtime and forwarded directly to the Jira Deployments API. |
+| Does your app process data outside Atlassian? | No | Runs entirely on the Atlassian Forge runtime. No external servers or infrastructure. |
+| Does your app log end-user data? | No | No logging infrastructure. Forge runtime logs are managed by Atlassian. |
+| Does your app store logs outside Atlassian? | No | No external logging. |
+
+### Third-Party Sharing
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your app share data with sub-processors? | No | No external connections. All communication is inbound (webhooks) and to Jira (via Forge runtime). |
+| Does your app share logs with third parties? | No | No external logging. |
+| Is log sharing essential to app function? | N/A | No sharing occurs. |
+
+### Data Residency
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your app support data residency? | App stores exclusively within Atlassian products supporting residency | All deployment metadata goes directly to the Jira Deployments API via Forge. No app-side storage exists. |
+| Does your app support data migration between regions? | N/A | No app-side storage to migrate. |
+
+### Data Retention
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your app retain data after uninstall? | No | No persistent storage. Uninstalling the App removes the webhook endpoint. Deployment records already written to Jira remain as Jira data governed by Atlassian's data policies. |
+| Does your app support custom retention periods? | N/A | No data retained by the App. |
+
+### Data Protection
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your app use privacy-enhancing technologies? | No | No data stored to protect. Deployment metadata is processed transiently and forwarded to Jira. |
+| Does your app use full disk encryption? | N/A | No external storage. Runs entirely on Atlassian Forge. |
+
+### GDPR
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Is your organization a GDPR data controller? | No | No PII is collected. The App processes only deployment metadata (application names, namespaces, Helm chart versions, Git commit SHAs, Jira issue keys, environment names, deployment URLs). |
+| Is your organization a GDPR data processor? | No | No PII is processed or stored. Deployment metadata passes through to Jira in real-time. |
+| Does your app transfer EEA data outside the EEA? | No | No external data transfers. All processing occurs within the Atlassian Forge runtime. |
+| What GDPR transfer mechanisms do you use? | N/A | No transfers outside the Forge runtime. |
+
+### CCPA
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Is your organization a CCPA business? | Not Applicable | No personal information is collected. The App processes only technical deployment metadata. |
+| Is your organization a CCPA service provider? | Not Applicable | No personal information is processed. |
+
+### Security & Authentication
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your app access PATs, passwords, or shared secrets? | No | Uses Forge app authentication only. The HMAC webhook secret is stored as a Forge environment variable, not a user credential. Incoming webhooks are verified using HMAC signature verification (SHA-256). |
+| Does your app require a Data Processing Agreement? | No | No data processing outside Atlassian. |
+
+### Certifications
+
+| Question | Answer | Rationale |
+|----------|--------|-----------|
+| Does your organization hold compliance certifications? | No | Individual developer project. |
+| Have you completed CAIQ Lite? | No | Not applicable for current scale. |
+
+### Security Program
+
+| Item | Value |
+|------|-------|
+| Security contact | https://github.com/boxcee/forge-flux-deployments/issues |
+| Privacy policy | https://boxcee.github.io/forge-flux-deployments/privacy-policy |
+| App permissions justification | See [API Scope Justification](#api-scope-justification) section above |
