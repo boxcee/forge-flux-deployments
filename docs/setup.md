@@ -1,19 +1,12 @@
+---
+title: Setup
+nav_order: 2
+description: "Connect FluxCD or ArgoCD to Jira's native Deployments panel."
+---
+
 # Getting Started & Setup Guide
 
 This guide will help you connect your GitOps pipeline to Jira's native Deployments panel using **GitOps Deployments for Jira**.
-
-## Table of Contents
-1. [Prerequisites](#1-prerequisites)
-2. [FluxCD Configuration](#2-fluxcd-configuration)
-   - [A. Create a Webhook Secret](#a-create-a-webhook-secret)
-   - [B. Configure the Provider](#b-configure-the-provider)
-   - [C. Create the Alert](#c-create-the-alert)
-3. [ArgoCD Configuration](#3-argocd-configuration)
-   - [A. Configure Notifications](#a-configure-notifications)
-   - [B. Define the Template](#b-define-the-template)
-4. [Annotate Your Resources](#4-annotate-your-resources)
-
----
 
 ## 1. Prerequisites
 
@@ -111,7 +104,3 @@ For deployments to appear in Jira, you must annotate your resources with the rel
 | `jira` | Comma-separated Jira issue keys | `PROJ-123,PROJ-456` |
 | `env` | Environment name | `production` |
 | `url` | A link to show in Jira | `https://github.com/my-org/repo` |
-
----
-
-[Back to Home](./)
