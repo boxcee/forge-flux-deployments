@@ -1,4 +1,4 @@
-# Requirements: GitOps Deployments for Jira — Marketplace Readiness
+# Requirements: GitOps Deployments for Jira -- Marketplace Readiness
 
 **Defined:** 2026-03-11
 **Core Value:** Every documentation page renders correctly on GitHub Pages, passes Atlassian Marketplace review, and accurately reflects what the app does.
@@ -67,28 +67,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SITE-01 | Phase ? | Pending |
-| SITE-02 | Phase ? | Pending |
-| SITE-03 | Phase ? | Pending |
-| LEGL-01 | Phase ? | Pending |
-| LEGL-02 | Phase ? | Pending |
-| LEGL-03 | Phase ? | Pending |
-| LEGL-04 | Phase ? | Pending |
-| LEGL-05 | Phase ? | Pending |
-| MRKT-01 | Phase ? | Pending |
-| MRKT-02 | Phase ? | Pending |
-| MRKT-03 | Phase ? | Pending |
-| ACCY-01 | Phase ? | Pending |
-| ACCY-02 | Phase ? | Pending |
-| ACCY-03 | Phase ? | Pending |
-| REPO-01 | Phase ? | Pending |
-| REPO-02 | Phase ? | Pending |
+| SITE-01 | Phase 1: Site Foundation | Pending |
+| SITE-02 | Phase 1: Site Foundation | Pending |
+| SITE-03 | Phase 2: Content Accuracy | Pending |
+| LEGL-01 | Phase 3: Legal & Compliance | Pending |
+| LEGL-02 | Phase 3: Legal & Compliance | Pending |
+| LEGL-03 | Phase 3: Legal & Compliance | Pending |
+| LEGL-04 | Phase 3: Legal & Compliance | Pending |
+| LEGL-05 | Phase 3: Legal & Compliance | Pending |
+| MRKT-01 | Phase 4: Marketplace Listing | Pending |
+| MRKT-02 | Phase 4: Marketplace Listing | Pending |
+| MRKT-03 | Phase 4: Marketplace Listing | Pending |
+| ACCY-01 | Phase 2: Content Accuracy | Pending |
+| ACCY-02 | Phase 2: Content Accuracy | Pending |
+| ACCY-03 | Phase 2: Content Accuracy | Pending |
+| REPO-01 | Phase 1: Site Foundation | Pending |
+| REPO-02 | Phase 1: Site Foundation | Pending |
 
 **Coverage:**
 - v1 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after initial definition*
+*Last updated: 2026-03-11 after roadmap creation*
