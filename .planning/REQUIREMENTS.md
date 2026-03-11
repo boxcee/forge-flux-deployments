@@ -13,10 +13,10 @@
 
 ### Legal & Compliance
 
-- [ ] **LEGL-01**: Privacy policy is accessible at a live GitHub Pages URL
-- [ ] **LEGL-02**: Terms of service/EULA is accessible at a live GitHub Pages URL
-- [ ] **LEGL-03**: Privacy policy content is reviewed for Marketplace compliance completeness
-- [ ] **LEGL-04**: Terms of service content is reviewed for Marketplace compliance completeness
+- [x] **LEGL-01**: Privacy policy is accessible at a live GitHub Pages URL
+- [x] **LEGL-02**: Terms of service/EULA is accessible at a live GitHub Pages URL
+- [x] **LEGL-03**: Privacy policy content is reviewed for Marketplace compliance completeness
+- [x] **LEGL-04**: Terms of service content is reviewed for Marketplace compliance completeness
 - [ ] **LEGL-05**: Privacy & Security tab answers are drafted for Marketplace submission
 
 ### Marketplace Listing
@@ -70,10 +70,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SITE-01 | Phase 1: Site Foundation | Complete |
 | SITE-02 | Phase 1: Site Foundation | Complete |
 | SITE-03 | Phase 2: Content Accuracy | Complete |
-| LEGL-01 | Phase 3: Legal & Compliance | Pending |
-| LEGL-02 | Phase 3: Legal & Compliance | Pending |
-| LEGL-03 | Phase 3: Legal & Compliance | Pending |
-| LEGL-04 | Phase 3: Legal & Compliance | Pending |
+| LEGL-01 | Phase 3: Legal & Compliance | Complete |
+| LEGL-02 | Phase 3: Legal & Compliance | Complete |
+| LEGL-03 | Phase 3: Legal & Compliance | Complete |
+| LEGL-04 | Phase 3: Legal & Compliance | Complete |
 | LEGL-05 | Phase 3: Legal & Compliance | Pending |
 | MRKT-01 | Phase 4: Marketplace Listing | Pending |
 | MRKT-02 | Phase 4: Marketplace Listing | Pending |
