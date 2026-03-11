@@ -28,11 +28,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Every page on the site is reachable via sidebar navigation links (no dead links, no orphan pages)
   3. Root README.md exists on GitHub and links to the live docs site
   4. LICENSE file exists in the repository root
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md -- Theme migration and docs page setup (just-the-docs config, front matter, index rewrite, troubleshooting placeholder)
+- [ ] 01-02-PLAN.md -- Root repository files (ELv2 LICENSE, overview README, CONTRIBUTING.md)
 
 ### Phase 2: Content Accuracy
 **Goal**: Every code example, annotation reference, and configuration instruction in the docs matches what the source code actually does
@@ -86,7 +86,7 @@ Note: Phase 2 and Phase 3 can execute in parallel (both depend only on Phase 1).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Site Foundation | 0/? | Not started | - |
+| 1. Site Foundation | 0/2 | Planning complete | - |
 | 2. Content Accuracy | 0/? | Not started | - |
 | 3. Legal & Compliance | 0/? | Not started | - |
 | 4. Marketplace Listing | 0/? | Not started | - |
