@@ -16,15 +16,28 @@ This guide will help you connect your GitOps pipeline to Jira's native Deploymen
 
 ## 2. FluxCD Configuration
 
-### A. Create a Webhook Secret
+### A. Set the webhook secret
+
+Set the HMAC secret in your Forge environment. This must match the token used in the Kubernetes secret below. Without it, all webhooks return 401.
+
+```bash
+forge variables set WEBHOOK_SECRET '<your-secret-token>'
+```
+
+### B. Create a Webhook Secret
+
+Create the Kubernetes secret that FluxCD uses to sign webhook payloads:
+
 ```bash
 kubectl create secret generic jira-webhook-hmac \
   --namespace flux-system \
-  --from-literal=token='YOUR_SECRET_TOKEN'
+  --from-literal=token='<your-secret-token>'
 ```
 
-### B. Configure the Provider
+### C. Configure the Provider
+
 Replace `<webtrigger-url>` with the URL provided by your Jira app configuration.
+
 ```yaml
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
@@ -38,7 +51,8 @@ spec:
     name: jira-webhook-hmac
 ```
 
-### C. Create the Alert
+### D. Create the Alert
+
 ```yaml
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
@@ -53,6 +67,37 @@ spec:
     - kind: HelmRelease
       name: '*'
 ```
+
+### E. Annotate your HelmRelease
+
+Add annotations to each HelmRelease you want tracked in Jira:
+
+```yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: my-app
+  namespace: production
+  annotations:
+    event.toolkit.fluxcd.io/jira: "PROJ-123"
+    event.toolkit.fluxcd.io/env: "production"
+    event.toolkit.fluxcd.io/env-type: "production"
+    event.toolkit.fluxcd.io/url: "https://github.com/org/repo"
+spec:
+  chart:
+    spec:
+      version: "1.2.3"   # exposed as chart-version in events
+```
+
+> **Note:** Flux strips the `event.toolkit.fluxcd.io/` prefix when sending webhook payloads, so the app supports both full and short keys. The `helm.toolkit.fluxcd.io/chart-version` annotation is read from the `revision` field in webhook payloads.
+
+### F. Verify it works
+
+Trigger a HelmRelease reconciliation and check `forge logs` for a 200 response.
+
+- **200** -- Deployment record created in Jira.
+- **204** -- Event was skipped. Check that `jira` and `env` annotations are set, and that the event reason is not ignored.
+- **401** -- HMAC verification failed. Verify that `WEBHOOK_SECRET` matches the Kubernetes secret token.
 
 ---
 
@@ -95,7 +140,23 @@ template.jira-deployment: |
 
 ---
 
-## 4. Annotate Your Resources
+## 4. Annotation Reference
+
+### FluxCD Annotations
+
+| Annotation | Short Key | Required | Default | Description |
+|---|---|---|---|---|
+| `event.toolkit.fluxcd.io/jira` | `jira` | Yes | -- | Comma-separated Jira issue keys. If missing, event is silently skipped (204). |
+| `event.toolkit.fluxcd.io/env` | `env` | Yes | -- | Environment name. Returns 400 if missing. |
+| `event.toolkit.fluxcd.io/env-type` | `env-type` | No | `unmapped` | Jira environment type. Valid values: `unmapped`, `development`, `testing`, `staging`, `production`. |
+| `event.toolkit.fluxcd.io/url` | `url` | No | `''` | URL shown in Jira deployment panel. Recommended -- Jira panel link is broken without it. |
+| `helm.toolkit.fluxcd.io/chart-version` | `revision` | No | -- | Chart version used in display name and deployment label. |
+
+#### Ignored event reasons
+
+`UninstallSucceeded` and `DependencyNotReady` events return 204 silently and do not create deployment records. This is intentional.
+
+### ArgoCD Annotations
 
 For deployments to appear in Jira, you must annotate your resources with the relevant Jira issue keys.
 
