@@ -33,8 +33,8 @@
 
 ### Repository
 
-- [ ] **REPO-01**: Root README.md exists as GitHub landing page with links to docs site
-- [ ] **REPO-02**: LICENSE file exists with appropriate license
+- [x] **REPO-01**: Root README.md exists as GitHub landing page with links to docs site
+- [x] **REPO-02**: LICENSE file exists with appropriate license
 
 ## v2 Requirements
 
@@ -81,8 +81,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ACCY-01 | Phase 2: Content Accuracy | Pending |
 | ACCY-02 | Phase 2: Content Accuracy | Pending |
 | ACCY-03 | Phase 2: Content Accuracy | Pending |
-| REPO-01 | Phase 1: Site Foundation | Pending |
-| REPO-02 | Phase 1: Site Foundation | Pending |
+| REPO-01 | Phase 1: Site Foundation | Complete |
+| REPO-02 | Phase 1: Site Foundation | Complete |
 
 **Coverage:**
 - v1 requirements: 16 total
