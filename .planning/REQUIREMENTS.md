@@ -1,0 +1,94 @@
+# Requirements: GitOps Deployments for Jira — Marketplace Readiness
+
+**Defined:** 2026-03-11
+**Core Value:** Every documentation page renders correctly on GitHub Pages, passes Atlassian Marketplace review, and accurately reflects what the app does.
+
+## v1 Requirements
+
+### Documentation Site
+
+- [ ] **SITE-01**: Site uses just-the-docs theme with sidebar navigation and search
+- [ ] **SITE-02**: All pages render correctly on GitHub Pages with working links
+- [ ] **SITE-03**: Troubleshooting page covers common issues (auth failures, missing annotations, ignored reasons)
+
+### Legal & Compliance
+
+- [ ] **LEGL-01**: Privacy policy is accessible at a live GitHub Pages URL
+- [ ] **LEGL-02**: Terms of service/EULA is accessible at a live GitHub Pages URL
+- [ ] **LEGL-03**: Privacy policy content is reviewed for Marketplace compliance completeness
+- [ ] **LEGL-04**: Terms of service content is reviewed for Marketplace compliance completeness
+- [ ] **LEGL-05**: Privacy & Security tab answers are drafted for Marketplace submission
+
+### Marketplace Listing
+
+- [ ] **MRKT-01**: TODO placeholder URLs in marketplace-listing.md are replaced with live links
+- [ ] **MRKT-02**: Listing description, summary, and highlights are cross-checked for accuracy
+- [ ] **MRKT-03**: App icon meets Atlassian Marketplace size and format specifications
+
+### Content Accuracy
+
+- [ ] **ACCY-01**: Setup guide FluxCD instructions match actual source code behavior
+- [ ] **ACCY-02**: Setup guide ArgoCD instructions match actual payload format in code
+- [ ] **ACCY-03**: Annotation reference table is complete for both FluxCD and ArgoCD
+
+### Repository
+
+- [ ] **REPO-01**: Root README.md exists as GitHub landing page with links to docs site
+- [ ] **REPO-02**: LICENSE file exists with appropriate license
+
+## v2 Requirements
+
+### Documentation Site
+
+- **SITE-04**: Architecture/data flow diagram showing webhook-to-Jira path
+- **SITE-05**: Screenshots or workflow visuals for Marketplace listing
+
+### Legal & Compliance
+
+- **LEGL-06**: GDPR/CCPA specific language in privacy policy
+
+### Marketplace Listing
+
+- **MRKT-04**: Screenshots embedded in listing
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| New app features | This milestone is docs/listing only |
+| Marketing website beyond GitHub Pages | Marketplace listing + GitHub Pages is sufficient |
+| KYC/KYB verification | Manual process done in Atlassian Partner portal, not code |
+| License enforcement in code | Code concern, separate from docs milestone |
+| Mobile-optimized docs | just-the-docs is responsive by default |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SITE-01 | Phase ? | Pending |
+| SITE-02 | Phase ? | Pending |
+| SITE-03 | Phase ? | Pending |
+| LEGL-01 | Phase ? | Pending |
+| LEGL-02 | Phase ? | Pending |
+| LEGL-03 | Phase ? | Pending |
+| LEGL-04 | Phase ? | Pending |
+| LEGL-05 | Phase ? | Pending |
+| MRKT-01 | Phase ? | Pending |
+| MRKT-02 | Phase ? | Pending |
+| MRKT-03 | Phase ? | Pending |
+| ACCY-01 | Phase ? | Pending |
+| ACCY-02 | Phase ? | Pending |
+| ACCY-03 | Phase ? | Pending |
+| REPO-01 | Phase ? | Pending |
+| REPO-02 | Phase ? | Pending |
+
+**Coverage:**
+- v1 requirements: 16 total
+- Mapped to phases: 0
+- Unmapped: 16 ⚠️
+
+---
+*Requirements defined: 2026-03-11*
+*Last updated: 2026-03-11 after initial definition*
