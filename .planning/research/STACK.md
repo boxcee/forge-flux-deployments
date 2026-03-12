@@ -1,7 +1,7 @@
 # Stack Research
 
-**Domain:** GitHub Pages documentation site for Atlassian Forge app Marketplace listing
-**Researched:** 2026-03-11
+**Domain:** Forge Admin Configuration UI for per-installation webhook secret management
+**Researched:** 2026-03-12
 **Confidence:** HIGH
 
 ## Recommended Stack
@@ -10,188 +10,216 @@
 
 | Technology | Version | Purpose | Why Recommended |
 |------------|---------|---------|-----------------|
-| Jekyll | 3.10+ (GitHub Pages built-in) | Static site generator | GitHub Pages runs Jekyll natively. No build pipeline needed. Zero config deployment from `docs/` folder. |
-| just-the-docs | v0.12.0 | Documentation theme | Purpose-built for documentation: built-in search, sidebar navigation, breadcrumbs, TOC, responsive design. The current `jekyll-theme-minimal` has no navigation, no search, no sidebar -- unacceptable for a multi-page docs site. |
-| GitHub Pages | N/A | Hosting | Free, tied to the repo, custom domain support. Required by project constraints. |
-| GitHub Actions | N/A | CI for markdown linting | Catch broken links and lint issues before merge. Lightweight, no external dependencies. |
+| `@forge/react` | ^11.9.0 | UI Kit frontend framework | Official Forge UI framework. Renders natively inside Jira admin. No build pipeline needed -- Forge bundles it. `render: native` in manifest. |
+| `@forge/resolver` | ^1.7.1 | Backend function definitions | Bridges UI Kit frontend to backend logic. Resolvers handle storage reads/writes and are invoked from the frontend via `@forge/bridge`. |
+| `@forge/bridge` | ^5.10.0 | Frontend-to-backend invocation | Provides `invoke()` to call resolver functions from UI Kit components. Included automatically in UI Kit apps. |
+| `@forge/kvs` | ^1.2.0 | Encrypted secret storage | Replaces `@forge/api` storage (legacy, no new features since March 2025). Provides `kvs.setSecret()` / `kvs.getSecret()` with automatic per-installation scoping and encryption at rest. |
+
+### Manifest Modules (New)
+
+These manifest entries must be added to the existing `manifest.yml`:
+
+| Module | Key | Purpose |
+|--------|-----|---------|
+| `jira:adminPage` | `admin-config` | Main admin settings page in Jira Apps section |
+| `function` | `resolver` | Resolver function for UI Kit backend calls |
+| `resources` | `admin-page` | Points to `src/frontend/index.jsx` |
+
+### Manifest Changes
+
+```yaml
+# ADD to existing manifest.yml
+modules:
+  jira:adminPage:
+    - key: admin-config
+      resource: admin-page
+      title: GitOps Deployments Settings
+      render: native
+      resolver:
+        function: resolver
+
+  function:
+    # existing functions stay
+    - key: handleFluxEvent
+      handler: index.handleFluxEvent
+    - key: handleArgoEvent
+      handler: index.handleArgoEvent
+    # NEW resolver function
+    - key: resolver
+      handler: resolver.handler
+
+resources:
+  - key: admin-page
+    path: src/frontend/index.jsx
+
+permissions:
+  scopes:
+    # existing scopes stay
+    - write:deployment-info:jira
+    - write:deployment:jira-software
+    - read:deployment:jira-software
+    # NEW scope for @forge/kvs
+    - storage:app
+```
 
 ### Supporting Libraries
 
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| jekyll-remote-theme | (GitHub Pages built-in) | Load just-the-docs without Gemfile | Always -- this is how GitHub Pages loads non-default themes via `remote_theme` in `_config.yml` |
-| markdownlint-cli2 | latest | Markdown linting | CI pipeline and local development. Catches inconsistent formatting before it ships. |
-| markdownlint-cli2-action | v17+ | GitHub Actions wrapper | CI only. DavidAnson/markdownlint-cli2-action is the canonical GitHub Action for markdown linting. |
+| `@forge/api` | ^4.0.0 (existing) | Jira REST API calls | Keep for `submitDeployment` in `src/jira.js`. Do NOT use its storage module -- use `@forge/kvs` instead. |
 
 ### Development Tools
 
 | Tool | Purpose | Notes |
 |------|---------|-------|
-| markdownlint VS Code extension | Local markdown linting | `davidanson.vscode-markdownlint`. Same rules as CI, instant feedback. |
-| Jekyll local preview | Test rendering locally | `bundle exec jekyll serve` from `docs/`. Optional -- GitHub Pages preview via PR deploy is often sufficient. |
+| `forge tunnel` | Live debug admin page locally | Already in workflow. Tunnels both webtrigger and admin page modules. |
+| `forge deploy -e development` | Deploy to dev environment | Already in workflow. Must redeploy after manifest changes. |
 
-## Theme Migration: minimal to just-the-docs
+## Project Structure Changes
 
-The current setup uses `jekyll-theme-minimal` (`pages-themes/minimal@v0.2.0`). This theme is a single-column layout with no navigation, no search, and no sidebar. It works for a single-page README-style site but fails for multi-page documentation.
-
-### Current `_config.yml`
-
-```yaml
-theme: jekyll-theme-minimal
-remote_theme: pages-themes/minimal@v0.2.0
-plugins:
-- jekyll-remote-theme
+```
+src/
+  frontend/
+    index.jsx          # NEW - UI Kit admin page component
+  resolver.js          # NEW - Resolver functions (getSecrets, setSecrets)
+  index.js             # MODIFY - read secrets from kvs instead of process.env
+  hmac.js              # NO CHANGE
+  bearer.js            # NO CHANGE
+  mapper.js            # NO CHANGE
+  argocd-mapper.js     # NO CHANGE
+  jira.js              # NO CHANGE
+  __tests__/
+    resolver.test.js   # NEW - test resolver functions
+    index.test.js      # MODIFY - mock kvs instead of process.env
 ```
 
-### Recommended `_config.yml`
+## Installation
 
-```yaml
-title: GitOps Deployments for Jira
-description: Track FluxCD and ArgoCD deployments directly in Jira issues.
-remote_theme: just-the-docs/just-the-docs@v0.12.0
-logo: /assets/icon.png
-plugins:
-  - jekyll-remote-theme
+```bash
+# New production dependencies
+npm install @forge/kvs @forge/react @forge/resolver @forge/bridge
 
-# Navigation
-nav_enabled: true
-
-# Search
-search_enabled: true
-search.button: true
-
-# Auxiliary links (top right)
-aux_links:
-  "View on GitHub": https://github.com/boxcee/forge-flux-deployments
-
-# Footer
-footer_content: "&copy; 2026 GitOps Deployments for Jira"
-
-# Exclude non-doc files from build
-exclude:
-  - plans/
-  - marketplace-listing.md
+# No new dev dependencies needed -- existing Jest setup works
 ```
 
-### Page Front Matter
+## Integration Points with Existing Code
 
-Each markdown page needs front matter for navigation ordering:
+### Secret Retrieval Migration
 
-```yaml
----
-title: Getting Started
-nav_order: 2
----
+Current (`src/index.js` lines 27-28, 74):
+```javascript
+const secret = process.env.WEBHOOK_SECRET;
+const token = process.env.ARGOCD_WEBHOOK_TOKEN;
 ```
 
-Navigation order recommendation:
-1. Home (`index.md`, nav_order: 1)
-2. Setup Guide (`setup.md`, nav_order: 2)
-3. Privacy Policy (`privacy-policy.md`, nav_order: 3)
-4. Terms of Service (`terms-of-service.md`, nav_order: 4)
+After migration:
+```javascript
+import { kvs } from '@forge/kvs';
 
-### What just-the-docs Gives You for Free
-
-- **Sidebar navigation** -- auto-generated from page front matter, no manual menu config
-- **Built-in search** -- client-side lunr.js search across all pages, zero config
-- **Table of contents** -- per-page TOC from headings, auto-generated
-- **Breadcrumbs** -- navigation context for nested pages
-- **Responsive layout** -- works on mobile without custom CSS
-- **Code syntax highlighting** -- Rouge-based, works out of the box
-
-## Markdown Linting Setup
-
-### `.markdownlint.json`
-
-```json
-{
-  "default": true,
-  "MD013": false,
-  "MD033": false,
-  "MD041": false
-}
+const secret = await kvs.getSecret('flux-hmac-secret');
+const token = await kvs.getSecret('argocd-bearer-token');
 ```
 
-Rationale:
-- **MD013** (line length): Disabled because documentation prose wraps naturally. Enforcing 80-char lines in docs is counterproductive.
-- **MD033** (inline HTML): Disabled because Jekyll/just-the-docs sometimes needs HTML for callouts or custom elements.
-- **MD041** (first line heading): Disabled because Jekyll front matter (`---`) precedes the first heading.
+Key storage keys:
+- `flux-hmac-secret` -- FluxCD HMAC webhook secret
+- `argocd-bearer-token` -- ArgoCD bearer token
 
-### GitHub Actions Workflow
+### Resolver Pattern
 
-```yaml
-name: Lint Docs
-on:
-  pull_request:
-    paths:
-      - 'docs/**/*.md'
-      - '*.md'
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DavidAnson/markdownlint-cli2-action@v17
-        with:
-          globs: |
-            docs/**/*.md
-            *.md
+```javascript
+// src/resolver.js
+import Resolver from '@forge/resolver';
+import { kvs } from '@forge/kvs';
+
+const resolver = new Resolver();
+
+resolver.define('getConfig', async () => {
+  // Return presence flags, never the actual secret values
+  const fluxSecret = await kvs.getSecret('flux-hmac-secret');
+  const argoToken = await kvs.getSecret('argocd-bearer-token');
+  return {
+    fluxSecretConfigured: !!fluxSecret,
+    argoTokenConfigured: !!argoToken,
+  };
+});
+
+resolver.define('saveFluxSecret', async (req) => {
+  await kvs.setSecret('flux-hmac-secret', req.payload.secret);
+  return { success: true };
+});
+
+resolver.define('saveArgoToken', async (req) => {
+  await kvs.setSecret('argocd-bearer-token', req.payload.token);
+  return { success: true };
+});
+
+export const handler = resolver.getDefinitions();
 ```
 
-## Atlassian Marketplace Documentation Requirements
+### Frontend Pattern
 
-The Marketplace review checks for:
+```jsx
+// src/frontend/index.jsx
+import React, { useState, useEffect } from 'react';
+import ForgeReconciler, {
+  Text, Form, TextField, Button, Stack, SectionMessage,
+} from '@forge/react';
+import { invoke } from '@forge/bridge';
 
-| Requirement | Status | How We Meet It |
-|-------------|--------|----------------|
-| Setup/usage documentation | Required | `setup.md` on GitHub Pages |
-| Privacy Policy | Required (cloud apps) | `privacy-policy.md` on GitHub Pages |
-| End User Terms / EULA | Required (cloud apps) | `terms-of-service.md` on GitHub Pages |
-| Support channel | Required | GitHub Issues link on index page |
-| Security statement | Recommended | Privacy & Security tab in Marketplace listing |
+const App = () => {
+  const [config, setConfig] = useState(null);
+  useEffect(() => {
+    invoke('getConfig').then(setConfig);
+  }, []);
+  // Form UI for setting secrets
+  // ...
+};
 
-The documentation URLs in the Marketplace listing must point to publicly accessible pages. GitHub Pages URLs (e.g., `https://boxcee.github.io/forge-flux-deployments/privacy-policy`) satisfy this requirement.
+ForgeReconciler.render(<App />);
+```
 
 ## Alternatives Considered
 
 | Recommended | Alternative | When to Use Alternative |
 |-------------|-------------|-------------------------|
-| just-the-docs | jekyll-theme-minimal (current) | Never for multi-page docs. Only suitable for single-page README-style sites. |
-| just-the-docs | Docusaurus | When you need versioned docs, i18n, or React components. Overkill here -- requires Node build pipeline and GitHub Actions custom deploy. |
-| just-the-docs | MkDocs (Material) | When your team prefers Python tooling. Requires GitHub Actions for build. Not native to GitHub Pages. |
-| just-the-docs | minimal-mistakes | When building a blog or portfolio. Too much chrome for pure documentation. |
-| GitHub Pages | Netlify/Vercel | When you need server-side features, redirects, or forms. Unnecessary complexity for static docs. |
-| markdownlint-cli2 | vale | When you need prose style linting (e.g., "avoid passive voice"). Overkill for structural markdown linting. |
+| UI Kit (`@forge/react`) | Custom UI (full React + bundler) | When you need complex UI beyond Atlassian design system components. Overkill here -- a settings form with two text fields and two buttons is trivially expressible in UI Kit. |
+| `@forge/kvs` | `@forge/api` storage module | Never for new code. Legacy module, no new features since March 2025. `@forge/kvs` is the replacement. |
+| `@forge/kvs` | Forge environment variables (`forge variables set`) | Never for customer-facing secrets. Env vars are vendor-side only -- customers cannot set them. This is the entire problem we are solving. |
+| `kvs.setSecret()` | `kvs.set()` (non-secret) | Never for credentials. `setSecret` encrypts values and prevents them from being returned by query methods. `set` stores in plaintext. |
+| Single admin page | Separate pages per tool | When there are 5+ configuration sections. Two secrets on one page is cleaner. |
 
 ## What NOT to Use
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| `jekyll-theme-minimal` | No navigation, no search, no sidebar. Users cannot navigate between pages without manually editing URLs or relying on the index page links. Unprofessional for a Marketplace listing. | `just-the-docs` |
-| Docusaurus / Hugo / MkDocs | Require custom build pipelines via GitHub Actions. Adds CI complexity for a 5-page docs site. | Jekyll with just-the-docs (native GitHub Pages support) |
-| `show_downloads: true` (current config) | Shows a "Download" button linking to GitHub releases. This app is a Forge app installed via Marketplace, not downloaded from GitHub. Confusing UX. | Remove from `_config.yml` |
-| `google_analytics:` (empty, current config) | Dead config line. Either add a tracking ID or remove it. Empty values are noise. | Remove unless you add a GA4 measurement ID |
-| Custom Jekyll plugins | GitHub Pages only supports a whitelist of plugins. Custom plugins require Actions-based build. Not worth it for this scope. | Stick to built-in just-the-docs features |
+| `@forge/ui` (UI Kit 1) | Deprecated. Uses `useState` from `@forge/ui` instead of React. Not compatible with `render: native`. | `@forge/react` (UI Kit 2/latest) |
+| `@forge/api` storage | Legacy. No new features since March 2025. Will not receive TTL, transactions, or bulk operations. | `@forge/kvs` |
+| `process.env.*` for secrets | Vendor-side only. Customers cannot configure. Defeats the purpose of this milestone. | `@forge/kvs` `setSecret`/`getSecret` |
+| Custom UI with bundler | Requires Webpack/Vite build step, separate `static/` directory, `index.html` entry point. Massive overhead for a two-field form. | UI Kit with `render: native` |
+| `useAsConfig: true` on admin page | Creates a small "Configure" button in Manage Apps that opens a limited modal. We want a full admin page with proper layout. | Standard `jira:adminPage` without `useAsConfig` |
 
 ## Version Compatibility
 
 | Package | Compatible With | Notes |
 |---------|-----------------|-------|
-| just-the-docs@v0.12.0 | GitHub Pages (Jekyll 3.10+) | Works via `remote_theme`. Released Jan 2025. Fixes footer placement issues from v0.11.0. |
-| jekyll-remote-theme | GitHub Pages built-in | No Gemfile needed for branch-based GitHub Pages deployment. |
-| markdownlint-cli2-action@v17 | Node 20+ runners | Uses `ubuntu-latest` which includes Node 20+. |
+| `@forge/react@^11` | `render: native` in manifest | Requires `render: native`. Do NOT use `render: default` (that is UI Kit 1). |
+| `@forge/kvs@^1.2` | `storage:app` scope | Must add `storage:app` to manifest permissions. |
+| `@forge/resolver@^1.7` | `@forge/bridge@^5` | Resolver defines backend, bridge invokes from frontend. Versions are compatible. |
+| `@forge/react@^11` | Node.js 22.x runtime | App runtime is `nodejs22.x`. Compatible. |
 
 ## Sources
 
-- [Just the Docs official site](https://just-the-docs.com/) -- features, configuration (HIGH confidence)
-- [Just the Docs GitHub releases](https://github.com/just-the-docs/just-the-docs/releases) -- v0.12.0 verified Jan 2025 (HIGH confidence)
-- [Just the Docs template repo](https://github.com/just-the-docs/just-the-docs-template) -- _config.yml reference (HIGH confidence)
-- [GitHub Pages supported themes](https://pages.github.com/themes/) -- theme compatibility (HIGH confidence)
-- [GitHub Pages Jekyll docs](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll) -- remote_theme support (HIGH confidence)
-- [Atlassian Marketplace app approval guidelines](https://developer.atlassian.com/platform/marketplace/app-approval-guidelines/) -- documentation requirements (HIGH confidence)
-- [Atlassian Marketplace listing guide](https://developer.atlassian.com/platform/marketplace/creating-a-marketplace-listing/) -- listing structure (HIGH confidence)
-- [markdownlint-cli2-action](https://github.com/DavidAnson/markdownlint-cli2-action) -- GitHub Actions linting (HIGH confidence)
+- [Jira Admin Page manifest reference](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-admin-page/) -- module config, required properties (HIGH confidence)
+- [Forge Secret Store API](https://developer.atlassian.com/platform/forge/runtime-reference/storage-api-secret/) -- `kvs.setSecret`/`getSecret` API, per-installation scoping (HIGH confidence)
+- [Forge KVS migration guide](https://developer.atlassian.com/platform/forge/storage-reference/kvs-migration-from-legacy/) -- `@forge/api` to `@forge/kvs` migration (HIGH confidence)
+- [Forge Resolver reference](https://developer.atlassian.com/platform/forge/runtime-reference/forge-resolver/) -- resolver pattern, invoke bridge (HIGH confidence)
+- [Forge UI Kit overview](https://developer.atlassian.com/platform/forge/ui-kit/overview/) -- `@forge/react`, `render: native` (HIGH confidence)
+- [Forge UI Kit components](https://developer.atlassian.com/platform/forge/ui-kit/components/) -- Form, TextField, Button, SectionMessage (HIGH confidence)
+- [@forge/react on npm](https://www.npmjs.com/package/@forge/react) -- v11.9.0 latest (HIGH confidence)
+- [@forge/kvs on npm](https://www.npmjs.com/package/@forge/kvs) -- v1.2.0 latest (HIGH confidence)
+- [@forge/resolver on npm](https://www.npmjs.com/package/@forge/resolver) -- v1.7.1 latest (HIGH confidence)
+- [Forge manifest permissions](https://developer.atlassian.com/platform/forge/manifest-reference/permissions/) -- `storage:app` scope (HIGH confidence)
 
 ---
-*Stack research for: GitHub Pages documentation for Atlassian Forge app Marketplace listing*
-*Researched: 2026-03-11*
+*Stack research for: Forge Admin Configuration UI*
+*Researched: 2026-03-12*

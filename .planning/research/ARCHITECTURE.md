@@ -1,298 +1,234 @@
-# Architecture Research
+# Architecture Patterns
 
-**Domain:** Documentation site for Atlassian Forge app (GitHub Pages + Jekyll)
-**Researched:** 2026-03-11
+**Domain:** Forge Admin Configuration UI for webhook secret management
+**Researched:** 2026-03-12
 **Confidence:** HIGH
 
-## Standard Architecture
-
-### System Overview
+## System Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    GitHub Pages (Jekyll)                      │
-├─────────────────────────────────────────────────────────────┤
-│  ┌────────────┐  ┌────────────┐  ┌────────────────────┐     │
-│  │  index.md   │  │  setup.md  │  │ privacy-policy.md  │     │
-│  │  (landing)  │  │  (guide)   │  │ terms-of-service   │     │
-│  └─────┬──────┘  └─────┬──────┘  └────────┬───────────┘     │
-│        │               │                   │                 │
-├────────┴───────────────┴───────────────────┴─────────────────┤
-│                 Jekyll Theme + Layout Layer                    │
-│  ┌──────────────────────────────────────────────────────┐    │
-│  │  _layouts/default.html  (nav sidebar + footer)        │    │
-│  └──────────────────────────────────────────────────────┘    │
-├─────────────────────────────────────────────────────────────┤
-│                    Static Assets                              │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐                   │
-│  │ icon.png │  │ icon.svg │  │ style.css│                   │
-│  └──────────┘  └──────────┘  └──────────┘                   │
-└─────────────────────────────────────────────────────────────┘
-         │                              │
-         ▼                              ▼
-┌─────────────────┐          ┌─────────────────────┐
-│ Atlassian        │          │ GitHub repo          │
-│ Marketplace      │          │ (README links here)  │
-│ (links to legal) │          │                      │
-└─────────────────┘          └─────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     Jira Admin Settings                          │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Admin Page (UI Kit / @forge/react)                        │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │  │
+│  │  │ FluxCD       │  │ ArgoCD       │  │ Status       │    │  │
+│  │  │ Secret Field │  │ Token Field  │  │ Indicators   │    │  │
+│  │  └──────┬───────┘  └──────┬───────┘  └──────────────┘    │  │
+│  │         │                 │                                │  │
+│  │         └────────┬────────┘                                │  │
+│  │                  │ invoke()                                │  │
+│  └──────────────────┼────────────────────────────────────────┘  │
+│                     │                                            │
+│  ┌──────────────────┼────────────────────────────────────────┐  │
+│  │  Resolver (src/resolver.js)                                │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │  │
+│  │  │ getConfig    │  │ saveSecret   │  │ deleteSecret │    │  │
+│  │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘    │  │
+│  │         │                 │                  │             │  │
+│  │         └────────┬────────┴──────────────────┘             │  │
+│  │                  │                                         │  │
+│  │         ┌────────┴────────┐                                │  │
+│  │         │   @forge/kvs    │                                │  │
+│  │         │  Secret Store   │  (encrypted, per-installation) │  │
+│  │         └────────┬────────┘                                │  │
+│  └──────────────────┼────────────────────────────────────────┘  │
+│                     │                                            │
+└─────────────────────┼────────────────────────────────────────────┘
+                      │ kvs.getSecret()
+┌─────────────────────┼────────────────────────────────────────────┐
+│  Webtrigger Handlers (src/index.js)                               │
+│  ┌──────────────────┼──────────────────┐                          │
+│  │  handleFluxEvent │ handleArgoEvent  │                          │
+│  │  reads flux-     │ reads argocd-    │                          │
+│  │  hmac-secret     │ bearer-token     │                          │
+│  └──────────┬───────┴──────────┬───────┘                          │
+│             │                  │                                   │
+│  ┌──────────┴──────┐ ┌────────┴────────┐                          │
+│  │ hmac.js         │ │ bearer.js       │ (unchanged)              │
+│  │ (verify HMAC)   │ │ (verify token)  │                          │
+│  └─────────────────┘ └─────────────────┘                          │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
-### Component Responsibilities
+## Component Boundaries
 
-| Component | Responsibility | Current State |
-|-----------|----------------|---------------|
-| `docs/index.md` | Landing page, navigation hub, value proposition | Exists but sparse -- links to setup and legal only |
-| `docs/setup.md` | Full setup guide for FluxCD + ArgoCD | Exists, well-structured with ToC |
-| `docs/privacy-policy.md` | Privacy policy for Marketplace compliance | Exists, needs URL in marketplace-listing.md |
-| `docs/terms-of-service.md` | EULA for Marketplace compliance | Exists, needs URL in marketplace-listing.md |
-| `docs/marketplace-listing.md` | Internal reference for Marketplace submission form fields | Exists, has TODO placeholders for URLs |
-| `docs/_config.yml` | Jekyll site config (theme, title, logo) | Exists, uses `pages-themes/minimal@v0.2.0` |
-| `docs/assets/` | Icons and images | Contains icon.png and icon.svg |
-| `_layouts/default.html` | Custom layout override (does not exist yet) | Missing -- needed for navigation |
-
-## Recommended Page Hierarchy
-
-### Current Problem
-
-The `pages-themes/minimal` theme has a left sidebar showing only the site title, description, and download links. There is no built-in navigation menu. Visitors landing on any page other than index.md have no way to navigate to other pages except the `[Back to Home]` link manually added to setup.md.
-
-### Recommended Structure
-
-```
-docs/
-├── _config.yml              # Jekyll config (theme, title, nav data)
-├── _layouts/
-│   └── default.html         # Override theme layout to add nav links
-├── assets/
-│   ├── css/
-│   │   └── style.scss       # Custom styles (nav highlighting, footer)
-│   ├── icon.png
-│   └── icon.svg
-├── index.md                 # Landing page (what + why + quick links)
-├── setup.md                 # Setup guide (FluxCD + ArgoCD)
-├── privacy-policy.md        # Legal: privacy policy
-├── terms-of-service.md      # Legal: EULA
-└── marketplace-listing.md   # Internal only (not linked from nav)
-```
-
-### Structure Rationale
-
-- **Flat hierarchy:** Five public pages total. No subdirectories needed. Subdirectories add complexity with zero benefit at this scale.
-- **`_layouts/default.html` override:** The only way to add navigation to the minimal theme. Copy the theme's default layout and inject a nav section in the sidebar.
-- **`marketplace-listing.md` stays unlisted:** It is a reference document for filling the Marketplace submission form, not a user-facing page. Exclude from nav.
-
-## Architectural Patterns
-
-### Pattern 1: Theme Layout Override for Navigation
-
-**What:** Copy `pages-themes/minimal`'s `_layouts/default.html` into `docs/_layouts/default.html` and add a `<nav>` block in the sidebar section below the existing header/description.
-
-**When to use:** When you need navigation but want to keep the minimal theme's look.
-
-**Trade-offs:** You own the layout file now. If the upstream theme updates, you will not get those changes automatically. Acceptable tradeoff -- the minimal theme is stable and rarely updated.
-
-**Implementation:**
-
-```html
-<!-- Add this block inside the <header> section of default.html, after the description -->
-<nav>
-  <ul>
-    <li><a href="{{ '/' | relative_url }}">Home</a></li>
-    <li><a href="{{ '/setup' | relative_url }}">Setup Guide</a></li>
-    <li><a href="{{ '/privacy-policy' | relative_url }}">Privacy Policy</a></li>
-    <li><a href="{{ '/terms-of-service' | relative_url }}">Terms of Service</a></li>
-  </ul>
-</nav>
-```
-
-Using `relative_url` filter ensures links work regardless of the repository's base path on GitHub Pages.
-
-### Pattern 2: Data-Driven Navigation (Alternative)
-
-**What:** Define navigation structure in `_config.yml` under a custom `navigation` key and loop over it in the layout.
-
-**When to use:** When you expect navigation to change frequently or have many pages.
-
-**Trade-offs:** More flexible but adds indirection. Not worth it for 4 links.
-
-**Recommendation:** Skip this. Hardcode the nav links in the layout override. Four links do not warrant data-driven navigation.
-
-### Pattern 3: Footer with Legal Links
-
-**What:** Add privacy policy and terms of service links in the page footer. This is the standard pattern for SaaS/app documentation sites and directly satisfies Marketplace requirements.
-
-**When to use:** Always, for legal pages.
-
-**Implementation:**
-
-```html
-<!-- In _layouts/default.html, replace or extend the footer -->
-<footer>
-  <p>&copy; 2026 GitOps Deployments for Jira</p>
-  <p>
-    <a href="{{ '/privacy-policy' | relative_url }}">Privacy Policy</a> |
-    <a href="{{ '/terms-of-service' | relative_url }}">Terms of Service</a>
-  </p>
-</footer>
-```
-
-## Navigation Structure
-
-### Sidebar (Left)
-
-The minimal theme places all sidebar content in a `<header>` element on the left. Add navigation links here:
-
-1. **Home** -- links to `index.md`
-2. **Setup Guide** -- links to `setup.md`
-3. **Privacy Policy** -- links to `privacy-policy.md`
-4. **Terms of Service** -- links to `terms-of-service.md`
-
-### Footer
-
-Repeat legal links in the footer. This is standard practice and ensures legal pages are accessible from every page regardless of sidebar visibility on mobile.
-
-### Header
-
-No separate header needed. The minimal theme's sidebar serves as the header on mobile (collapses above content). No changes required.
-
-### Cross-Linking Pattern
-
-| From | To | How |
-|------|----|-----|
-| `index.md` | `setup.md` | Prominent "Get Started" call-to-action link |
-| `index.md` | Legal pages | Listed in a "Legal" section |
-| `setup.md` | `index.md` | Via sidebar nav (no manual "Back to Home" needed once nav exists) |
-| Legal pages | GitHub issues | "Contact" link in each legal page |
-| Marketplace listing | `privacy-policy.md` | Direct GitHub Pages URL |
-| Marketplace listing | `terms-of-service.md` | Direct GitHub Pages URL |
-| Root `README.md` | GitHub Pages site | Link to the published site |
-
-## Marketplace URL Requirements
-
-Atlassian Marketplace requires direct URLs for:
-
-1. **Privacy Policy URL** -- must point to a publicly accessible page
-2. **End User Terms URL** -- must point to a publicly accessible page
-3. **Support URL** -- already set to GitHub Issues
-
-The GitHub Pages URLs will follow this pattern:
-- `https://boxcee.github.io/forge-flux-deployments/privacy-policy`
-- `https://boxcee.github.io/forge-flux-deployments/terms-of-service`
-
-These URLs must be entered in the Marketplace listing form and in `marketplace-listing.md` to replace the TODO placeholders.
+| Component | Responsibility | Communicates With |
+|-----------|---------------|-------------------|
+| `src/frontend/index.jsx` | UI Kit admin page. Renders form fields, status indicators, handles user input. | Resolver via `invoke()` |
+| `src/resolver.js` | Backend logic for admin page. Reads/writes secrets. Returns config status. | `@forge/kvs`, `@forge/api` (webTrigger URLs) |
+| `src/index.js` | Webtrigger handlers. Reads secrets for auth verification. | `@forge/kvs`, `src/hmac.js`, `src/bearer.js` |
+| `src/hmac.js` | HMAC-SHA256 verification. Accepts secret as parameter. | None (pure function) |
+| `src/bearer.js` | Bearer token verification. Accepts token as parameter. | None (pure function) |
+| `@forge/kvs` (Secret Store) | Encrypted per-installation secret storage. | Forge platform (managed) |
 
 ## Data Flow
 
-### Build Flow
+### Admin Configures Secret
 
 ```
-docs/*.md (Markdown)
-    |
-    v
-GitHub Pages CI (Jekyll build)
-    |
-    v
-_layouts/default.html + _config.yml + theme assets
-    |
-    v
-Static HTML site at boxcee.github.io/forge-flux-deployments/
+Admin opens Settings > Apps > GitOps Deployments Settings
+  |
+  v
+Frontend calls invoke('getConfig')
+  |
+  v
+Resolver reads kvs.getSecret('flux-hmac-secret') and kvs.getSecret('argocd-bearer-token')
+  |
+  v
+Returns { fluxConfigured: true/false, argoConfigured: true/false }
+  |
+  v
+Frontend shows status badges and empty input fields
+  |
+  v
+Admin enters secret, clicks Save
+  |
+  v
+Frontend calls invoke('saveFluxSecret', { secret: '...' })
+  |
+  v
+Resolver validates non-empty, calls kvs.setSecret('flux-hmac-secret', secret)
+  |
+  v
+Returns { success: true }
+  |
+  v
+Frontend shows success SectionMessage, refreshes status
 ```
 
-### User Navigation Flow
+### Webhook Arrives (Modified Flow)
 
 ```
-Marketplace Listing
-    |
-    ├──> Privacy Policy (GitHub Pages)
-    ├──> Terms of Service (GitHub Pages)
-    └──> Support (GitHub Issues)
-
-GitHub README
-    |
-    └──> Documentation Site (GitHub Pages index)
-              |
-              ├──> Setup Guide
-              ├──> Privacy Policy
-              └──> Terms of Service
+FluxCD sends POST to webtrigger URL
+  |
+  v
+handleFluxEvent reads secret: await kvs.getSecret('flux-hmac-secret')
+  |
+  v
+  ├── secret is null/undefined --> return { statusCode: 503, body: 'Webhook secret not configured' }
+  |
+  └── secret exists --> verifyHmac(event.body, signature, secret)
+        |
+        └── (rest of existing flow unchanged)
 ```
 
-## Build Order (Dependencies)
+## Patterns to Follow
 
-This is the critical sequencing for the roadmap:
+### Pattern 1: Write-Only Secret UI
 
-| Step | What | Depends On | Why First |
-|------|------|-----------|-----------|
-| 1 | Create `_layouts/default.html` with nav | Nothing | All pages need consistent navigation before other changes |
-| 2 | Add footer with legal links | Step 1 | Footer is part of the layout |
-| 3 | Enhance `index.md` content | Step 1 | Landing page should use the new layout |
-| 4 | Update legal page content if needed | Step 1 | Legal pages should render with nav |
-| 5 | Fix `marketplace-listing.md` URLs | GitHub Pages deployed | Need actual URLs to fill TODOs |
-| 6 | Create root `README.md` | Steps 1-4 | README links to the site, so site should be ready first |
-| 7 | Add custom CSS if needed | Step 1 | Styling refinements come last |
+**What:** The admin page never displays secret values. It only shows whether a secret is configured (boolean).
 
-**Key dependency:** Steps 1-2 (layout override) unblock everything else. The layout is the foundation.
+**When:** Always, for any credential storage UI.
 
-## Anti-Patterns
+**Why:** Reduces exposure surface. Even admin users should not see the raw secret -- they pasted it, they know it. If they need to change it, they enter a new one.
 
-### Anti-Pattern 1: Switching Themes
+**Implementation:**
+```javascript
+// Resolver: CORRECT -- return boolean, not value
+resolver.define('getConfig', async () => {
+  const flux = await kvs.getSecret('flux-hmac-secret');
+  return { fluxConfigured: flux != null };
+});
 
-**What people do:** Replace `pages-themes/minimal` with a heavier documentation theme (just-the-docs, minimal-mistakes) to get built-in navigation.
+// Resolver: WRONG -- never return secret values to frontend
+resolver.define('getConfig', async () => {
+  const flux = await kvs.getSecret('flux-hmac-secret');
+  return { fluxSecret: flux }; // DO NOT DO THIS
+});
+```
 
-**Why it is wrong:** Overkill for 4-5 pages. Introduces a new theme's conventions, configuration surface, and potential breaking changes. The existing theme works and looks professional.
+### Pattern 2: Graceful Degradation for Unconfigured Secrets
 
-**Do this instead:** Override the layout file with a nav block. Five minutes of HTML gives you everything a theme switch would, without the migration cost.
+**What:** When a webhook arrives but the secret is not yet configured, return 503 (Service Unavailable) with a descriptive message, not 401 (Unauthorized).
 
-### Anti-Pattern 2: Duplicating Navigation in Every Page
+**When:** After migrating from `process.env` to `kvs.getSecret()`.
 
-**What people do:** Add manual navigation links at the top/bottom of each Markdown file.
+**Why:** 401 implies the caller sent wrong credentials. 503 tells the CD tool operator that the receiving end is not ready yet. This distinction matters for debugging.
 
-**Why it is wrong:** Maintenance burden. Every new page means updating every existing page. Easy to get out of sync.
+**Implementation:**
+```javascript
+const secret = await kvs.getSecret('flux-hmac-secret');
+if (!secret) {
+  return { statusCode: 503, body: 'Webhook secret not configured. Configure it in Jira admin settings.' };
+}
+```
 
-**Do this instead:** Put navigation in the layout. It appears on every page automatically.
+### Pattern 3: Resolver as Thin Adapter
 
-### Anti-Pattern 3: Using `marketplace-listing.md` as a Public Page
+**What:** Keep resolver functions thin. They validate input, call `kvs`, and return results. No business logic in the resolver.
 
-**What people do:** Link `marketplace-listing.md` in the site navigation.
+**When:** Always.
 
-**Why it is wrong:** This file is a reference for filling the Marketplace submission form. It contains internal notes (scope justifications, security disclosures) meant for Atlassian reviewers, not end users. Publishing it creates confusion.
+**Why:** Resolvers are hard to unit test in isolation (they depend on the Forge runtime). Keep logic in pure functions that are easy to test.
 
-**Do this instead:** Keep it in `docs/` for Jekyll to render (useful as a personal reference URL), but exclude it from navigation. Optionally add `published: false` in front matter to prevent Jekyll from building it.
+**Implementation:**
+```javascript
+// CORRECT: thin resolver
+resolver.define('saveFluxSecret', async (req) => {
+  const { secret } = req.payload;
+  if (!secret || typeof secret !== 'string' || secret.trim().length === 0) {
+    return { success: false, error: 'Secret must not be empty' };
+  }
+  await kvs.setSecret('flux-hmac-secret', secret.trim());
+  return { success: true };
+});
+```
 
-### Anti-Pattern 4: Hardcoding the Base URL
+## Anti-Patterns to Avoid
 
-**What people do:** Write absolute URLs like `https://boxcee.github.io/forge-flux-deployments/setup` in Markdown links.
+### Anti-Pattern 1: Caching Secrets in Module-Level Variables
 
-**Why it is wrong:** Breaks if the repo is forked, renamed, or if someone tests locally. Also breaks in PR preview deployments.
+**What:** Reading the secret once at module load and caching it in a variable.
 
-**Do this instead:** Use relative links in Markdown (`./setup`) and `relative_url` filter in layouts. Jekyll handles the base path.
+**Why bad:** Forge functions may be reused across invocations (warm starts). A cached secret would not reflect updates made via the admin page until the function cold-starts again.
 
-## Integration Points
+**Instead:** Read from `kvs.getSecret()` on every webtrigger invocation. The KVS call is fast (sub-100ms).
 
-### External Services
+### Anti-Pattern 2: Using `process.env` as Fallback
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| Atlassian Marketplace | Privacy Policy URL, EULA URL, Support URL | URLs must be publicly accessible, stable, and HTTPS |
-| GitHub Pages | Automatic build from `docs/` folder on main branch | Ensure GitHub Pages source is set to `main` branch, `/docs` folder |
-| GitHub Repository | README links to Pages site | Root README.md should link to the documentation site |
+**What:** Trying both `kvs.getSecret()` and `process.env.WEBHOOK_SECRET` as a migration aid.
 
-### Internal Boundaries
+**Why bad:** Creates confusion about which secret is authoritative. Customers configure via admin UI but the app might silently use the old env var. Debugging becomes a nightmare.
 
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Layout <-> Pages | Jekyll front matter + Liquid templates | Pages declare `layout: default` in front matter (or rely on theme default) |
-| Config <-> Theme | `_config.yml` variables consumed by theme layout | `title`, `description`, `logo`, `show_downloads` |
-| Markdown <-> HTML | Jekyll Markdown renderer (kramdown) | Use relative links, let Jekyll handle URL resolution |
+**Instead:** Clean cut. Remove all `process.env` secret reads. If `kvs.getSecret()` returns null, the secret is not configured. Period.
+
+### Anti-Pattern 3: Storing Both Secrets Under a Single Key
+
+**What:** `kvs.setSecret('config', { flux: '...', argo: '...' })` to store everything in one object.
+
+**Why bad:** Cannot update one without reading and rewriting the other. Race condition if two admins save simultaneously. Also means reading the ArgoCD token to update the FluxCD secret.
+
+**Instead:** One key per secret. `flux-hmac-secret` and `argocd-bearer-token` are independent keys.
+
+## File Layout
+
+```
+manifest.yml                    # MODIFY: add jira:adminPage, resolver, resource, storage:app scope
+src/
+  frontend/
+    index.jsx                   # NEW: UI Kit admin page (React component)
+  resolver.js                   # NEW: Resolver functions (getConfig, saveFluxSecret, saveArgoToken)
+  index.js                      # MODIFY: replace process.env with kvs.getSecret()
+  hmac.js                       # UNCHANGED
+  bearer.js                     # UNCHANGED
+  mapper.js                     # UNCHANGED
+  argocd-mapper.js              # UNCHANGED
+  jira.js                       # UNCHANGED
+  __tests__/
+    resolver.test.js            # NEW: test resolver logic
+    index.test.js               # MODIFY: mock @forge/kvs instead of process.env
+    frontend/
+      index.test.jsx            # OPTIONAL: UI tests are low value for a simple form
+```
 
 ## Sources
 
-- [pages-themes/minimal GitHub repository](https://github.com/pages-themes/minimal) -- theme documentation and layout structure
-- [vaibhavvikas/jekyll-theme-minimalistic](https://github.com/vaibhavvikas/jekyll-theme-minimalistic) -- alternative theme with built-in sidebar nav (evaluated, not recommended)
-- [GitHub Pages documentation](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll) -- GitHub Pages + Jekyll setup
-- [Jekyll directory structure](https://jekyllrb.com/docs/structure/) -- standard Jekyll project layout
-- [Atlassian data privacy guidelines for developers](https://developer.atlassian.com/platform/marketplace/data-privacy-guidelines/) -- Marketplace privacy/EULA requirements
-- [Atlassian Marketplace Partner Agreement](https://www.atlassian.com/licensing/marketplace/partneragreement) -- legal URL requirements
+- [Forge Resolver API](https://developer.atlassian.com/platform/forge/runtime-reference/forge-resolver/) -- resolver pattern, invoke bridge
+- [Forge Secret Store](https://developer.atlassian.com/platform/forge/runtime-reference/storage-api-secret/) -- per-installation scoping, encryption
+- [Forge UI Kit overview](https://developer.atlassian.com/platform/forge/ui-kit/overview/) -- render: native, @forge/react
+- [Forge jira:adminPage](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-admin-page/) -- manifest config
 
 ---
-*Architecture research for: GitOps Deployments for Jira documentation site*
-*Researched: 2026-03-11*
+*Architecture research for: Forge Admin Configuration UI*
+*Researched: 2026-03-12*
