@@ -1,9 +1,9 @@
-# Requirements: GitOps Deployments for Jira -- Marketplace Readiness
+# Requirements: GitOps Deployments for Jira
 
 **Defined:** 2026-03-11
-**Core Value:** Every documentation page renders correctly on GitHub Pages, passes Atlassian Marketplace review, and accurately reflects what the app does.
+**Core Value:** Customers can install the app and configure their webhook secrets entirely through the Atlassian UI — no CLI access or vendor intervention required.
 
-## v1 Requirements
+## v1.0 Requirements (Complete)
 
 ### Documentation Site
 
@@ -36,7 +36,28 @@
 - [x] **REPO-01**: Root README.md exists as GitHub landing page with links to docs site
 - [x] **REPO-02**: LICENSE file exists with appropriate license
 
-## v2 Requirements
+## v1.1 Requirements
+
+### Admin Configuration
+
+- [ ] **CONF-01**: Jira admin can set FluxCD HMAC webhook secret via admin settings page
+- [ ] **CONF-02**: Jira admin can set ArgoCD bearer token via admin settings page
+- [ ] **CONF-03**: Admin page shows save confirmation feedback (success/error)
+- [ ] **CONF-04**: Admin page displays the webtrigger URL for copying into CD tool config
+
+### Storage
+
+- [ ] **STOR-01**: Secrets are stored per-installation using Forge KVS secret store
+- [ ] **STOR-02**: Webtrigger handlers read secrets from KVS instead of environment variables
+- [ ] **STOR-03**: Webhook returns clear error when secrets have not been configured
+
+### Documentation
+
+- [ ] **DOCS-01**: Setup guide documents admin UI configuration flow (replaces forge variables set)
+- [ ] **DOCS-02**: Troubleshooting page covers configuration-related failure modes
+- [ ] **DOCS-03**: Marketplace listing reflects self-service configuration capability
+
+## Future Requirements
 
 ### Documentation Site
 
@@ -55,11 +76,12 @@
 
 | Feature | Reason |
 |---------|--------|
-| New app features | This milestone is docs/listing only |
+| Secret rotation / key management | Single active secret per installation is sufficient for v1.1 |
+| Environment variable fallback | Clean cut — existing installations must re-configure via admin UI |
+| Custom UI (React iframe) | UI Kit is sufficient for a settings form with two text fields |
+| Multi-tenant secret scoping | Forge KVS provides automatic per-installation isolation |
 | Marketing website beyond GitHub Pages | Marketplace listing + GitHub Pages is sufficient |
 | KYC/KYB verification | Manual process done in Atlassian Partner portal, not code |
-| License enforcement in code | Code concern, separate from docs milestone |
-| Mobile-optimized docs | just-the-docs is responsive by default |
 
 ## Traceability
 
@@ -67,28 +89,39 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SITE-01 | Phase 1: Site Foundation | Complete |
-| SITE-02 | Phase 1: Site Foundation | Complete |
-| SITE-03 | Phase 2: Content Accuracy | Complete |
-| LEGL-01 | Phase 3: Legal & Compliance | Complete |
-| LEGL-02 | Phase 3: Legal & Compliance | Complete |
-| LEGL-03 | Phase 3: Legal & Compliance | Complete |
-| LEGL-04 | Phase 3: Legal & Compliance | Complete |
-| LEGL-05 | Phase 3: Legal & Compliance | Complete |
-| MRKT-01 | Phase 4: Marketplace Listing | Complete |
-| MRKT-02 | Phase 4: Marketplace Listing | Complete |
-| MRKT-03 | Phase 4: Marketplace Listing | Complete |
-| ACCY-01 | Phase 2: Content Accuracy | Complete |
-| ACCY-02 | Phase 2: Content Accuracy | Complete |
-| ACCY-03 | Phase 2: Content Accuracy | Complete |
-| REPO-01 | Phase 1: Site Foundation | Complete |
-| REPO-02 | Phase 1: Site Foundation | Complete |
+| SITE-01 | v1.0 Phase 1: Site Foundation | Complete |
+| SITE-02 | v1.0 Phase 1: Site Foundation | Complete |
+| SITE-03 | v1.0 Phase 2: Content Accuracy | Complete |
+| LEGL-01 | v1.0 Phase 3: Legal & Compliance | Complete |
+| LEGL-02 | v1.0 Phase 3: Legal & Compliance | Complete |
+| LEGL-03 | v1.0 Phase 3: Legal & Compliance | Complete |
+| LEGL-04 | v1.0 Phase 3: Legal & Compliance | Complete |
+| LEGL-05 | v1.0 Phase 3: Legal & Compliance | Complete |
+| MRKT-01 | v1.0 Phase 4: Marketplace Listing | Complete |
+| MRKT-02 | v1.0 Phase 4: Marketplace Listing | Complete |
+| MRKT-03 | v1.0 Phase 4: Marketplace Listing | Complete |
+| ACCY-01 | v1.0 Phase 2: Content Accuracy | Complete |
+| ACCY-02 | v1.0 Phase 2: Content Accuracy | Complete |
+| ACCY-03 | v1.0 Phase 2: Content Accuracy | Complete |
+| REPO-01 | v1.0 Phase 1: Site Foundation | Complete |
+| REPO-02 | v1.0 Phase 1: Site Foundation | Complete |
+| CONF-01 | — | Pending |
+| CONF-02 | — | Pending |
+| CONF-03 | — | Pending |
+| CONF-04 | — | Pending |
+| STOR-01 | — | Pending |
+| STOR-02 | — | Pending |
+| STOR-03 | — | Pending |
+| DOCS-01 | — | Pending |
+| DOCS-02 | — | Pending |
+| DOCS-03 | — | Pending |
 
 **Coverage:**
-- v1 requirements: 16 total
-- Mapped to phases: 16
-- Unmapped: 0
+- v1.0 requirements: 16 total (all complete)
+- v1.1 requirements: 10 total
+- Mapped to phases: 0 (pending roadmap)
+- Unmapped: 10
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after roadmap creation*
+*Last updated: 2026-03-12 after v1.1 milestone requirements*
