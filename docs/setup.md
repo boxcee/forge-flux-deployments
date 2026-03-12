@@ -16,13 +16,16 @@ This guide will help you connect your GitOps pipeline to Jira's native Deploymen
 
 ## 2. FluxCD Configuration
 
-### A. Set the webhook secret
+### A. Configure the webhook secret
 
-Set the HMAC secret in your Forge environment. This must match the token used in the Kubernetes secret below. Without it, all webhooks return 401.
+Navigate to the app's settings page to set the HMAC shared secret. Without a configured secret, all webhooks return 503.
 
-```bash
-forge variables set WEBHOOK_SECRET '<your-secret-token>'
-```
+1. Go to **Jira Settings** (gear icon) > **Apps** > **GitOps Deployments** in the left sidebar.
+2. Enter your HMAC shared secret in the **FluxCD HMAC Secret** field (minimum 8 characters).
+3. Click **Save** -- a success confirmation appears inline.
+4. Use the same secret value when creating the Kubernetes secret for your FluxCD notification provider (see step B).
+
+> **Developer note:** You can alternatively use `forge variables set WEBHOOK_SECRET '<secret>'` for CLI-based configuration. The admin UI value takes priority when both are set.
 
 ### B. Create a Webhook Secret
 
@@ -36,7 +39,7 @@ kubectl create secret generic jira-webhook-hmac \
 
 ### C. Configure the Provider
 
-Replace `<webtrigger-url>` with the URL provided by your Jira app configuration.
+Copy the FluxCD webhook URL displayed on the admin settings page.
 
 ```yaml
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
@@ -97,23 +100,27 @@ Trigger a HelmRelease reconciliation and check `forge logs` for a 200 response.
 
 - **200** -- Deployment record created in Jira.
 - **204** -- Event was skipped. Check that `jira` and `env` annotations are set, and that the event reason is not ignored.
-- **401** -- HMAC verification failed. Verify that `WEBHOOK_SECRET` matches the Kubernetes secret token.
+- **401** -- HMAC verification failed. Open the admin settings page and verify the secret matches the Kubernetes secret token.
+- **503** -- Webhook secret not configured. Navigate to the admin settings page to set your secret.
 
 ---
 
 ## 3. ArgoCD Configuration
 
-### A. Set the webhook token
+### A. Configure the webhook token
 
-Set the bearer token in your Forge environment. This is checked against the `Authorization: Bearer <token>` header on incoming webhooks. Without it, all webhooks return 401.
+Navigate to the app's settings page to set the bearer token. Without a configured token, all webhooks return 503.
 
-```bash
-forge variables set ARGOCD_WEBHOOK_TOKEN '<your-token>'
-```
+1. Go to **Jira Settings** (gear icon) > **Apps** > **GitOps Deployments** in the left sidebar.
+2. Enter your bearer token in the **ArgoCD Bearer Token** field (minimum 8 characters).
+3. Click **Save** -- a success confirmation appears inline.
+4. Use the same token value in the `Authorization: Bearer <token>` header of your ArgoCD webhook configuration (see step B).
+
+> **Developer note:** You can alternatively use `forge variables set ARGOCD_WEBHOOK_TOKEN '<token>'` for CLI-based configuration. The admin UI value takes priority when both are set.
 
 ### B. Configure the webhook service
 
-Add the webhook service to your `argocd-notifications-cm` ConfigMap:
+Copy the ArgoCD webhook URL from the admin settings page. Add the webhook service to your `argocd-notifications-cm` ConfigMap:
 
 ```yaml
 data:
@@ -187,7 +194,8 @@ Trigger a sync and check `forge logs` for a 200 response.
 
 - **200** -- Deployment record created in Jira.
 - **204** -- Event was skipped. Check that `jira` and `env` annotations are set.
-- **401** -- Bearer token verification failed. Verify that `ARGOCD_WEBHOOK_TOKEN` matches the token in the `Authorization` header.
+- **401** -- Bearer token verification failed. Open the admin settings page and verify the token matches the `Authorization` header value.
+- **503** -- Webhook secret not configured. Navigate to the admin settings page to set your token.
 
 ---
 

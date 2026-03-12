@@ -8,6 +8,14 @@ description: "Common issues and solutions."
 
 The app returns standard HTTP status codes from its webtrigger endpoints. Use `forge logs` to see detailed error messages for any failed request.
 
+## Webhook returns 503 (Secret Not Configured)
+
+**Symptom:** Webhook returns 503 with body `Webhook secret not configured. Configure via app admin page.`
+
+**Cause:** No secret has been saved in the admin settings page, and no environment variable fallback is set.
+
+**Fix:** Navigate to **Jira Settings** (gear icon) > **Apps** > **GitOps Deployments** and enter your webhook secret (FluxCD) or bearer token (ArgoCD).
+
 ## Webhook returns 401 (Authentication Failed)
 
 ### FluxCD (HMAC)
@@ -16,10 +24,7 @@ The app returns standard HTTP status codes from its webtrigger endpoints. Use `f
 
 **Checklist:**
 
-1. Verify `WEBHOOK_SECRET` is set:
-   ```bash
-   forge variables list --environment production
-   ```
+1. Verify the secret is configured: open the admin settings page (**Jira Settings** > **Apps** > **GitOps Deployments**) and check the FluxCD HMAC Secret field.
 2. Verify the secret value matches the Kubernetes secret token value exactly (no trailing newline, no extra whitespace).
 3. Verify the Flux Provider resource uses `type: generic-hmac` (not `generic`).
 4. Check that the `X-Signature` header is present in the request. Flux sends it in `sha256=<hex>` format.
@@ -32,14 +37,27 @@ The app returns standard HTTP status codes from its webtrigger endpoints. Use `f
 
 **Checklist:**
 
-1. Verify `ARGOCD_WEBHOOK_TOKEN` is set:
-   ```bash
-   forge variables list --environment production
-   ```
+1. Verify the token is configured: open the admin settings page (**Jira Settings** > **Apps** > **GitOps Deployments**) and check the ArgoCD Bearer Token field.
 2. Verify the token matches the `Authorization: Bearer <token>` header value configured in `argocd-notifications-cm`.
 3. Check the header format is `Bearer <token>` (with a space, no quotes around the token value).
 
 **Debug:** Run `forge logs --environment production` and look for `Bearer token verification failed`.
+
+## Re-consent prompt after upgrading to v1.1
+
+**Symptom:** Admin page shows an error or KVS operations fail after app upgrade.
+
+**Cause:** The v1.1 update adds the `storage:app` scope, triggering a Forge major version bump that requires admin re-consent.
+
+**Fix:** A Jira site admin must approve the new permissions. Existing webhooks continue working via environment variable fallback during the re-consent gap.
+
+## Admin page not found
+
+**Symptom:** Cannot find the app's settings page.
+
+**Cause:** Jira admin pages appear under **Settings > Apps** (left sidebar), not in Manage Apps or the app overview page.
+
+**Fix:** Navigate to **Jira Settings** (gear icon) > **Apps** > look for **GitOps Deployments** in the left sidebar. URL pattern: `/jira/settings/apps/{appId}/{envId}`.
 
 ## Deployments not appearing in Jira (silent 204)
 
@@ -54,7 +72,7 @@ The app skips events that lack a `jira` annotation and returns 204. Verify your 
 
 The annotation value must contain one or more Jira issue keys (e.g., `PROJ-123` or `PROJ-123,PROJ-456`).
 
-**Debug:** Run `forge logs` and look for `No jira annotation — skipping`.
+**Debug:** Run `forge logs` and look for `No jira annotation -- skipping`.
 
 ### Ignored event reasons (FluxCD only)
 
@@ -105,9 +123,11 @@ The request body is not valid JSON. This is rare with standard CD tool configura
 
 | Symptom | Likely Cause | Fix |
 |---|---|---|
-| 401 on every request | Secret/token mismatch | Re-set `WEBHOOK_SECRET` or `ARGOCD_WEBHOOK_TOKEN` via `forge variables set` |
+| 503 on every request | Secret/token not configured | Open the admin settings page and enter your secret or token |
+| 401 on every request | Secret/token mismatch | Open the admin settings page and verify the value matches your CD tool configuration |
 | No deployments, no errors | Missing `jira` annotation | Add `jira` annotation to HelmRelease/Application |
 | 400 "Missing env annotation" | Missing `env` annotation | Add `env` annotation |
 | Environment shows as "unmapped" | Missing `env-type`/`envType` | Add the annotation with a valid Jira environment type |
 | Deployment panel link broken | Missing or empty `url` | Add `url` annotation |
 | 502 errors | Jira API issue | Check `forge logs`, verify app scopes |
+| Admin page not found | Wrong navigation path | Go to Jira Settings > Apps (left sidebar), not Manage Apps |
