@@ -40,14 +40,14 @@
 
 ### Admin Configuration
 
-- [ ] **CONF-01**: Jira admin can set FluxCD HMAC webhook secret via admin settings page
-- [ ] **CONF-02**: Jira admin can set ArgoCD bearer token via admin settings page
-- [ ] **CONF-03**: Admin page shows save confirmation feedback (success/error)
-- [ ] **CONF-04**: Admin page displays the webtrigger URL for copying into CD tool config
+- [x] **CONF-01**: Jira admin can set FluxCD HMAC webhook secret via admin settings page
+- [x] **CONF-02**: Jira admin can set ArgoCD bearer token via admin settings page
+- [x] **CONF-03**: Admin page shows save confirmation feedback (success/error)
+- [x] **CONF-04**: Admin page displays the webtrigger URL for copying into CD tool config
 
 ### Storage
 
-- [ ] **STOR-01**: Secrets are stored per-installation using Forge KVS secret store
+- [x] **STOR-01**: Secrets are stored per-installation using Forge KVS secret store
 - [ ] **STOR-02**: Webtrigger handlers read secrets from KVS with env var fallback for safe migration (KVS takes priority; `process.env` is checked only when KVS returns undefined)
 - [ ] **STOR-03**: Webhook returns clear error when secrets have not been configured
 
@@ -106,11 +106,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ACCY-03 | v1.0 Phase 2: Content Accuracy | Complete |
 | REPO-01 | v1.0 Phase 1: Site Foundation | Complete |
 | REPO-02 | v1.0 Phase 1: Site Foundation | Complete |
-| CONF-01 | Phase 5: Admin Page & Storage Migration | Pending |
-| CONF-02 | Phase 5: Admin Page & Storage Migration | Pending |
-| CONF-03 | Phase 5: Admin Page & Storage Migration | Pending |
-| CONF-04 | Phase 5: Admin Page & Storage Migration | Pending |
-| STOR-01 | Phase 5: Admin Page & Storage Migration | Pending |
+| CONF-01 | Phase 5: Admin Page & Storage Migration | Complete |
+| CONF-02 | Phase 5: Admin Page & Storage Migration | Complete |
+| CONF-03 | Phase 5: Admin Page & Storage Migration | Complete |
+| CONF-04 | Phase 5: Admin Page & Storage Migration | Complete |
+| STOR-01 | Phase 5: Admin Page & Storage Migration | Complete |
 | STOR-02 | Phase 5: Admin Page & Storage Migration | Pending |
 | STOR-03 | Phase 5: Admin Page & Storage Migration | Pending |
 | DOCS-01 | Phase 6: Documentation Update | Pending |
