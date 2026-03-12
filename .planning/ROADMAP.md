@@ -119,10 +119,10 @@ Plans:
   1. Setup guide walks through the admin UI configuration flow -- no mention of `forge variables set` as the primary method
   2. Troubleshooting page covers "secret not configured" errors and re-consent prompts after upgrade
   3. Marketplace listing description reflects that customers self-configure their webhook secrets
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md -- Update setup guide, troubleshooting, and marketplace listing for admin UI flow
 
 ## Progress
 
