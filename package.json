@@ -8,7 +8,11 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "@forge/api": "^4.0.0"
+    "@forge/api": "^4.0.0",
+    "@forge/bridge": "^5.14.0",
+    "@forge/kvs": "^1.4.0",
+    "@forge/react": "^11.13.0",
+    "@forge/resolver": "^1.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
