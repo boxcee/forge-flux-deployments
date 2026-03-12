@@ -3,6 +3,7 @@ import { extractMetadata, buildDeploymentPayload, IGNORED_REASONS } from './mapp
 import { submitDeployment } from './jira.js';
 import { verifyBearerToken } from './bearer.js';
 import { extractMetadata as extractArgoMetadata, buildDeploymentPayload as buildArgoPayload } from './argocd-mapper.js';
+import { getFluxSecret, getArgoSecret } from './storage.js';
 
 async function submitAndRespond(payload) {
   const result = await submitDeployment(payload);
@@ -22,10 +23,16 @@ async function submitAndRespond(payload) {
 }
 
 export const handleFluxEvent = async (event) => {
-  // 1. Verify HMAC
+  // 1. Get secret from storage
   const signature = (event.headers?.['x-signature'] ?? [])[0];
-  const secret = process.env.WEBHOOK_SECRET;
+  const secret = await getFluxSecret();
 
+  if (!secret) {
+    console.warn('FluxCD webhook secret not configured');
+    return { statusCode: 503, body: 'Webhook secret not configured. Configure via app admin page.' };
+  }
+
+  // 2. Verify HMAC
   if (!verifyHmac(event.body, signature, secret)) {
     console.warn('HMAC verification failed');
     return { statusCode: 401, body: 'Unauthorized' };
@@ -69,10 +76,16 @@ export const handleFluxEvent = async (event) => {
 };
 
 export const handleArgoEvent = async (event) => {
-  // 1. Verify bearer token
+  // 1. Get token from storage
   const authHeader = (event.headers?.['authorization'] ?? [])[0];
-  const token = process.env.ARGOCD_WEBHOOK_TOKEN;
+  const token = await getArgoSecret();
 
+  if (!token) {
+    console.warn('ArgoCD webhook token not configured');
+    return { statusCode: 503, body: 'Webhook secret not configured. Configure via app admin page.' };
+  }
+
+  // 2. Verify bearer token
   if (!verifyBearerToken(authHeader, token)) {
     console.warn('Bearer token verification failed');
     return { statusCode: 401, body: 'Unauthorized' };

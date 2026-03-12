@@ -16,9 +16,13 @@ jest.unstable_mockModule('@forge/api', () => ({
   route: (strings, ...values) => strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), ''),
 }));
 
-// Set env vars before import
-process.env.WEBHOOK_SECRET = SECRET;
-process.env.ARGOCD_WEBHOOK_TOKEN = 'test-argo-token';
+// Mock storage.js instead of process.env
+const mockGetFluxSecret = jest.fn();
+const mockGetArgoSecret = jest.fn();
+jest.unstable_mockModule('../storage.js', () => ({
+  getFluxSecret: mockGetFluxSecret,
+  getArgoSecret: mockGetArgoSecret,
+}));
 
 const { handleFluxEvent, handleArgoEvent } = await import('../index.js');
 
@@ -46,6 +50,8 @@ function makeEvent(body) {
 describe('handleFluxEvent', () => {
   beforeEach(() => {
     mockRequestJira.mockReset();
+    mockGetFluxSecret.mockReset();
+    mockGetFluxSecret.mockResolvedValue(SECRET);
     mockRequestJira.mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -54,6 +60,15 @@ describe('handleFluxEvent', () => {
         unknownIssueKeys: [],
       }),
     });
+  });
+
+  test('returns 503 when flux secret not configured', async () => {
+    mockGetFluxSecret.mockResolvedValue(undefined);
+    const body = JSON.stringify(validFluxEvent);
+    const event = makeEvent(body);
+    const result = await handleFluxEvent(event);
+    expect(result.statusCode).toBe(503);
+    expect(result.body).toContain('not configured');
   });
 
   test('returns 401 for invalid HMAC', async () => {
@@ -147,6 +162,8 @@ function makeArgoEvent(body) {
 describe('handleArgoEvent', () => {
   beforeEach(() => {
     mockRequestJira.mockReset();
+    mockGetArgoSecret.mockReset();
+    mockGetArgoSecret.mockResolvedValue('test-argo-token');
     mockRequestJira.mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -155,6 +172,15 @@ describe('handleArgoEvent', () => {
         unknownIssueKeys: [],
       }),
     });
+  });
+
+  test('returns 503 when argo secret not configured', async () => {
+    mockGetArgoSecret.mockResolvedValue(undefined);
+    const body = JSON.stringify(validArgoPayload);
+    const event = makeArgoEvent(body);
+    const result = await handleArgoEvent(event);
+    expect(result.statusCode).toBe(503);
+    expect(result.body).toContain('not configured');
   });
 
   test('returns 401 for invalid bearer token', async () => {
