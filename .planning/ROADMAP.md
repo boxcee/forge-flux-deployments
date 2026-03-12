@@ -105,11 +105,11 @@ Plans:
   4. The admin page displays the webtrigger URL so the admin can copy it into their CD tool
   5. A FluxCD webhook authenticated with the admin-configured HMAC secret is accepted and creates a Jira deployment record
   6. A webhook received before any secret is configured returns an explicit "not configured" error (not a cryptic auth failure)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md -- Backend foundation: storage abstraction (KVS + env fallback) and Forge resolver
+- [ ] 05-02-PLAN.md -- Admin page UI, manifest wiring, and handler migration to KVS storage
 
 ### Phase 6: Documentation Update
 **Goal**: Setup guide, troubleshooting page, and marketplace listing accurately describe the admin UI configuration flow
@@ -135,5 +135,5 @@ Phases execute in numeric order: 5 -> 6
 | 2. Content Accuracy | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 3. Legal & Compliance | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 4. Marketplace Listing | v1.0 | 1/1 | Complete | 2026-03-12 |
-| 5. Admin Page & Storage Migration | v1.1 | 0/? | Not started | - |
+| 5. Admin Page & Storage Migration | v1.1 | 0/2 | Not started | - |
 | 6. Documentation Update | v1.1 | 0/? | Not started | - |
