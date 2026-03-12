@@ -14,10 +14,10 @@ const App = () => {
   useEffect(() => {
     invoke('getConfigStatus')
       .then(setStatus)
-      .catch(err => { console.error('getConfigStatus error:', err); setFeedback({ type: 'error', msg: 'Failed to load config status: ' + String(err) }); });
+      .catch(err => setFeedback({ type: 'error', msg: 'Failed to load config status: ' + String(err) }));
     invoke('getWebtriggerUrls')
       .then(setUrls)
-      .catch(err => { console.error('getWebtriggerUrls error:', err); });
+      .catch(err => console.error('getWebtriggerUrls error:', err));
   }, []);
 
   const fluxForm = useForm();
@@ -76,7 +76,7 @@ const App = () => {
           </Label>
           <Textfield
             type="password"
-            placeholder="Enter HMAC secret (min 8 characters)"
+            placeholder={status?.flux?.configured ? '••••••••••• (secret is set — enter new value to replace)' : 'Enter HMAC secret (min 8 characters)'}
             {...fluxForm.register('fluxSecret', { required: true, minLength: 8 })}
           />
         </FormSection>
@@ -93,7 +93,7 @@ const App = () => {
           </Label>
           <Textfield
             type="password"
-            placeholder="Enter bearer token (min 8 characters)"
+            placeholder={status?.argocd?.configured ? '••••••••••• (token is set — enter new value to replace)' : 'Enter bearer token (min 8 characters)'}
             {...argoForm.register('argoToken', { required: true, minLength: 8 })}
           />
         </FormSection>

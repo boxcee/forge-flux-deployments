@@ -17,7 +17,7 @@ resolver.define('getConfigStatus', async () => {
 resolver.define('getWebtriggerUrls', async () => {
   const [flux, argocd] = await Promise.all([
     webTrigger.getUrl('flux-webhook'),
-    webTrigger.getUrl('argocd-webhook'),
+    webTrigger.getUrl('argo-webhook'),
   ]);
   return { flux, argocd };
 });
