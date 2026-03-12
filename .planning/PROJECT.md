@@ -1,67 +1,71 @@
-# GitOps Deployments for Jira — Marketplace Readiness
+# GitOps Deployments for Jira
 
 ## What This Is
 
-Documentation and listing polish for a Forge app that receives FluxCD/ArgoCD webhook events and creates Jira deployment records. The app already works. This milestone focuses on getting the existing docs, legal pages, and GitHub Pages site to Atlassian Marketplace publishing quality.
+Forge app that receives FluxCD/ArgoCD webhook events and creates Jira deployment records via the Deployments API. Runs as a Forge webtrigger function on Node.js 22. Documentation site, legal pages, and Marketplace listing are published on GitHub Pages.
 
 ## Core Value
 
-Every documentation page renders correctly on GitHub Pages, passes Atlassian Marketplace review, and accurately reflects what the app does — so the listing is approved on first submission.
+Customers can install the app and configure their webhook secrets entirely through the Atlassian UI — no CLI access or vendor intervention required.
 
 ## Requirements
 
 ### Validated
 
-- v GitHub Pages site exists with Jekyll minimal theme (`docs/_config.yml`)
-- v Setup guide covers both FluxCD and ArgoCD configuration (`docs/setup.md`)
-- v Privacy policy exists (`docs/privacy-policy.md`)
-- v Terms of service exists (`docs/terms-of-service.md`)
-- v Marketplace listing draft exists with description, highlights, scopes (`docs/marketplace-listing.md`)
-- v Index page exists (`docs/index.md`)
-- v App icons exist (`docs/assets/icon.png`, `docs/assets/icon.svg`)
+- v1.0: GitHub Pages site with just-the-docs theme, sidebar navigation, search
+- v1.0: Setup guide covers both FluxCD and ArgoCD configuration
+- v1.0: Privacy policy and terms of service live at GitHub Pages URLs
+- v1.0: Marketplace listing complete with accurate copy, live URLs, app icon
+- v1.0: Annotation reference tables complete for FluxCD and ArgoCD
+- v1.0: Troubleshooting page covers auth failures, missing annotations, ignored reasons
+- v1.0: Root README.md, LICENSE (ELv2), CONTRIBUTING.md
 
 ### Active
 
-- [ ] Fix marketplace-listing.md TODO placeholders (Privacy Policy URL, End User Terms URL)
-- [ ] Cross-check all docs against actual source code for accuracy
-- [ ] Improve GitHub Pages rendering (navigation, links, layout)
-- [ ] Add root README.md (GitHub landing page for the repo)
-- [ ] Review and strengthen legal docs for Marketplace compliance
-- [ ] Ensure annotation reference table is complete and matches code
-- [ ] Verify ArgoCD setup instructions match actual payload format in code
+- [ ] Replace `forge variables set` with admin config UI for per-installation secrets
+- [ ] Admin page for FluxCD HMAC secret configuration
+- [ ] Admin page for ArgoCD bearer token configuration
+- [ ] Migrate app code from env vars to Forge Storage for secret retrieval
+- [ ] Update setup guide to reflect admin UI configuration flow
+- [ ] Update troubleshooting docs for new configuration method
+- [ ] Update marketplace listing to reflect self-service configuration
 
 ### Out of Scope
 
-- New app features — this is docs/listing only
-- ArgoCD `envType` annotation docs — code uses `envType` but this is a standard Argo annotation, not custom
-- Marketing website beyond GitHub Pages — Marketplace listing + GitHub Pages is sufficient
+- New webhook handlers or CD tool integrations — this milestone is config UX only
+- Multi-secret rotation / key management — single active secret per installation is sufficient
+- Marketing website beyond GitHub Pages
 - Screenshots/video — no running Jira instance available for capture
 
 ## Context
 
 - App is a Forge webtrigger app (Node.js 22, ESM, no build step)
 - Two webhook handlers: `handleFluxEvent` (HMAC auth) and `handleArgoEvent` (bearer token auth)
-- Manifest has `licensing: enabled: true` — ready for paid/free Marketplace listing
-- Current docs use Jekyll minimal theme via `remote_theme: pages-themes/minimal@v0.2.0`
+- Current secrets (`WEBHOOK_SECRET`, `ARGOCD_WEBHOOK_TOKEN`) set via `forge variables set` — vendor-side only
+- Customers cannot configure their own secrets — this is the core problem
+- Forge provides `@forge/api` storage API for per-installation data
+- Forge Admin Page module (Custom UI or UI Kit) enables settings screens in Jira admin
+- Manifest has `licensing: enabled: true` — ready for Marketplace listing
 - GitHub repo: `boxcee/forge-flux-deployments`
-- Flux annotations: `jira`, `env`, `env-type`, `url`, `revision` (short keys in webhook payloads)
-- Argo annotations: `jira`, `env`, `envType`, `url` (in `annotations` object of the custom payload)
-- The setup.md ArgoCD template sends `envType` not `env-type` — this matches the code
+- Docs site: `https://boxcee.github.io/forge-flux-deployments/`
 
 ## Constraints
 
-- **Platform**: Must render on GitHub Pages (Jekyll) — no custom build pipelines
-- **Marketplace**: Must satisfy Atlassian Marketplace review requirements (privacy policy, EULA, scope justification, security disclosures)
-- **No secrets**: Docs must not contain real tokens, URLs, or credentials
-- **Accuracy**: Every annotation, API scope, and configuration example must match the actual source code
+- **Platform**: Forge runtime — must use Forge-compatible storage and UI modules
+- **Security**: Secrets must be stored per-installation, not shared across tenants
+- **Backwards compatibility**: Existing webhook endpoints must continue working
+- **Accuracy**: Setup docs must match the new configuration flow exactly
+- **Marketplace**: P&S tab answers may need updating if data handling changes
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use GitHub Pages for hosting legal docs | Free, tied to repo, easy to maintain | — Pending |
-| Jekyll minimal theme | Already configured, lightweight, professional | — Pending |
-| Single setup guide for both CD tools | Users configure one or both — single page with sections | — Pending |
+| Use GitHub Pages for hosting legal docs | Free, tied to repo, easy to maintain | ✓ Good |
+| just-the-docs theme | Full navigation, search, responsive | ✓ Good |
+| Single setup guide for both CD tools | Users configure one or both — single page with sections | ✓ Good |
+| ELv2 license | Protects against unauthorized redistribution | ✓ Good |
+| Replace env vars with Forge Storage + Admin Page | Customers must self-serve secret config | — Pending |
 
 ---
-*Last updated: 2026-03-11 after initialization*
+*Last updated: 2026-03-12 after v1.1 milestone start*
