@@ -105,23 +105,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ACCY-03 | v1.0 Phase 2: Content Accuracy | Complete |
 | REPO-01 | v1.0 Phase 1: Site Foundation | Complete |
 | REPO-02 | v1.0 Phase 1: Site Foundation | Complete |
-| CONF-01 | — | Pending |
-| CONF-02 | — | Pending |
-| CONF-03 | — | Pending |
-| CONF-04 | — | Pending |
-| STOR-01 | — | Pending |
-| STOR-02 | — | Pending |
-| STOR-03 | — | Pending |
-| DOCS-01 | — | Pending |
-| DOCS-02 | — | Pending |
-| DOCS-03 | — | Pending |
+| CONF-01 | Phase 5: Admin Page & Storage Migration | Pending |
+| CONF-02 | Phase 5: Admin Page & Storage Migration | Pending |
+| CONF-03 | Phase 5: Admin Page & Storage Migration | Pending |
+| CONF-04 | Phase 5: Admin Page & Storage Migration | Pending |
+| STOR-01 | Phase 5: Admin Page & Storage Migration | Pending |
+| STOR-02 | Phase 5: Admin Page & Storage Migration | Pending |
+| STOR-03 | Phase 5: Admin Page & Storage Migration | Pending |
+| DOCS-01 | Phase 6: Documentation Update | Pending |
+| DOCS-02 | Phase 6: Documentation Update | Pending |
+| DOCS-03 | Phase 6: Documentation Update | Pending |
 
 **Coverage:**
 - v1.0 requirements: 16 total (all complete)
 - v1.1 requirements: 10 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 10
+- Mapped to phases: 10/10
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-12 after v1.1 milestone requirements*
+*Last updated: 2026-03-12 after v1.1 roadmap creation*

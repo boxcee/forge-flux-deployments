@@ -1,8 +1,9 @@
-# Roadmap: GitOps Deployments for Jira -- Marketplace Readiness
+# Roadmap: GitOps Deployments for Jira
 
-## Overview
+## Milestones
 
-The app works. The goal is to get the documentation, legal pages, and Marketplace listing to a state where Atlassian approves the submission on first attempt. The work follows a hard dependency chain: the GitHub Pages site must render with working navigation before content accuracy can be verified, legal URLs can be confirmed live, and listing materials can reference real links. Four phases move from site foundation through content accuracy, legal compliance, and finally the complete listing package.
+- ✅ **v1.0 Marketplace Readiness** - Phases 1-4 (shipped 2026-03-12)
+- 🚧 **v1.1 Admin Config UX** - Phases 5-6 (in progress)
 
 ## Phases
 
@@ -12,12 +13,25 @@ The app works. The goal is to get the documentation, legal pages, and Marketplac
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Site Foundation** - Migrate to just-the-docs theme with working navigation, deploy GitHub Pages, create root README
-- [ ] **Phase 2: Content Accuracy** - Cross-check all documentation against source code, add troubleshooting page
-- [x] **Phase 3: Legal & Compliance** - Get legal docs live at GitHub Pages URLs, review for Marketplace compliance, draft P&S tab answers (completed 2026-03-11)
-- [ ] **Phase 4: Marketplace Listing** - Replace TODO placeholders with live URLs, finalize listing copy and icon
+<details>
+<summary>v1.0 Marketplace Readiness (Phases 1-4) -- SHIPPED 2026-03-12</summary>
+
+- [x] **Phase 1: Site Foundation** - Migrate to just-the-docs theme with working navigation, deploy GitHub Pages, create root README
+- [x] **Phase 2: Content Accuracy** - Cross-check all documentation against source code, add troubleshooting page
+- [x] **Phase 3: Legal & Compliance** - Get legal docs live at GitHub Pages URLs, review for Marketplace compliance, draft P&S tab answers
+- [x] **Phase 4: Marketplace Listing** - Replace TODO placeholders with live URLs, finalize listing copy and icon
+
+</details>
+
+### v1.1 Admin Config UX
+
+- [ ] **Phase 5: Admin Page & Storage Migration** - Build admin settings UI, wire KVS secret storage, migrate handlers from env vars to KVS
+- [ ] **Phase 6: Documentation Update** - Rewrite setup guide for admin UI flow, update troubleshooting and marketplace listing
 
 ## Phase Details
+
+<details>
+<summary>v1.0 Phase Details (Phases 1-4)</summary>
 
 ### Phase 1: Site Foundation
 **Goal**: Documentation site renders on GitHub Pages with sidebar navigation, search, and working links across all pages
@@ -31,8 +45,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Theme migration and docs page setup (just-the-docs config, front matter, index rewrite, troubleshooting placeholder)
-- [ ] 01-02-PLAN.md -- Root repository files (ELv2 LICENSE, overview README, CONTRIBUTING.md)
+- [x] 01-01: Theme migration and docs page setup
+- [x] 01-02: Root repository files
 
 ### Phase 2: Content Accuracy
 **Goal**: Every code example, annotation reference, and configuration instruction in the docs matches what the source code actually does
@@ -46,47 +60,80 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Rewrite setup.md FluxCD and ArgoCD sections to match source code, add complete annotation reference tables
-- [ ] 02-02-PLAN.md -- Write troubleshooting page covering all failure modes (401, 400, 204, 502)
+- [x] 02-01: Rewrite setup.md FluxCD and ArgoCD sections
+- [x] 02-02: Write troubleshooting page
 
 ### Phase 3: Legal & Compliance
 **Goal**: Privacy policy and terms of service are live at publicly accessible URLs and contain everything Atlassian Marketplace review requires
 **Depends on**: Phase 1
 **Requirements**: LEGL-01, LEGL-02, LEGL-03, LEGL-04, LEGL-05
 **Success Criteria** (what must be TRUE):
-  1. Privacy policy is accessible at a public GitHub Pages URL (returns 200, renders correctly)
-  2. Terms of service is accessible at a public GitHub Pages URL (returns 200, renders correctly)
-  3. Privacy policy covers data collection, storage, third-party sharing, and data deletion -- consistent with the app being stateless and Forge-hosted
+  1. Privacy policy is accessible at a public GitHub Pages URL
+  2. Terms of service is accessible at a public GitHub Pages URL
+  3. Privacy policy covers data collection, storage, third-party sharing, and data deletion
   4. Terms of service covers liability, termination, and acceptable use
-  5. Privacy & Security tab answers are drafted in a document, aligned with what the privacy policy states
+  5. Privacy & Security tab answers are drafted and aligned with privacy policy
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Enhance privacy policy and terms of service with all Marketplace-required sections
-- [ ] 03-02-PLAN.md -- Draft complete Privacy & Security tab answers and update legal URLs in marketplace-listing.md
+- [x] 03-01: Enhance privacy policy and terms of service
+- [x] 03-02: Draft P&S tab answers and update legal URLs
 
 ### Phase 4: Marketplace Listing
-**Goal**: Marketplace listing materials are complete with real URLs, accurate copy, and a conforming app icon -- ready to paste into the Marketplace portal
+**Goal**: Marketplace listing materials are complete with real URLs, accurate copy, and a conforming app icon
 **Depends on**: Phase 1, Phase 2, Phase 3
 **Requirements**: MRKT-01, MRKT-02, MRKT-03
 **Success Criteria** (what must be TRUE):
-  1. marketplace-listing.md contains zero TODO placeholders -- all URLs point to live GitHub Pages
-  2. Listing description, summary, and highlights accurately describe what the app does (cross-checked against source code and setup guide)
-  3. App icon meets Atlassian Marketplace specifications (correct dimensions, format, no trademarked imagery)
+  1. marketplace-listing.md contains zero TODO placeholders
+  2. Listing description, summary, and highlights accurately describe what the app does
+  3. App icon meets Atlassian Marketplace specifications
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md -- Cross-check listing accuracy against source code, verify URLs, confirm icon selection
+- [x] 04-01: Cross-check listing accuracy, verify URLs, confirm icon
+
+</details>
+
+### Phase 5: Admin Page & Storage Migration
+**Goal**: Jira admins can configure webhook secrets through the Atlassian admin UI, and webhook handlers authenticate using those stored secrets
+**Depends on**: Phase 4 (v1.0 complete)
+**Requirements**: CONF-01, CONF-02, CONF-03, CONF-04, STOR-01, STOR-02, STOR-03
+**Success Criteria** (what must be TRUE):
+  1. Jira admin can navigate to the app's admin page and enter a FluxCD HMAC secret
+  2. Jira admin can navigate to the app's admin page and enter an ArgoCD bearer token
+  3. After saving a secret, the admin sees clear success or error feedback
+  4. The admin page displays the webtrigger URL so the admin can copy it into their CD tool
+  5. A FluxCD webhook authenticated with the admin-configured HMAC secret is accepted and creates a Jira deployment record
+  6. A webhook received before any secret is configured returns an explicit "not configured" error (not a cryptic auth failure)
+**Plans**: TBD
+
+Plans:
+- [ ] 05-01: TBD
+- [ ] 05-02: TBD
+
+### Phase 6: Documentation Update
+**Goal**: Setup guide, troubleshooting page, and marketplace listing accurately describe the admin UI configuration flow
+**Depends on**: Phase 5
+**Requirements**: DOCS-01, DOCS-02, DOCS-03
+**Success Criteria** (what must be TRUE):
+  1. Setup guide walks through the admin UI configuration flow -- no mention of `forge variables set` as the primary method
+  2. Troubleshooting page covers "secret not configured" errors and re-consent prompts after upgrade
+  3. Marketplace listing description reflects that customers self-configure their webhook secrets
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4
-Note: Phase 2 and Phase 3 can execute in parallel (both depend only on Phase 1).
+Phases execute in numeric order: 5 -> 6
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Site Foundation | 0/2 | Planning complete | - |
-| 2. Content Accuracy | 1/2 | In Progress|  |
-| 3. Legal & Compliance | 2/2 | Complete   | 2026-03-11 |
-| 4. Marketplace Listing | 0/1 | Not started | - |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Site Foundation | v1.0 | 2/2 | Complete | 2026-03-11 |
+| 2. Content Accuracy | v1.0 | 2/2 | Complete | 2026-03-11 |
+| 3. Legal & Compliance | v1.0 | 2/2 | Complete | 2026-03-11 |
+| 4. Marketplace Listing | v1.0 | 1/1 | Complete | 2026-03-12 |
+| 5. Admin Page & Storage Migration | v1.1 | 0/? | Not started | - |
+| 6. Documentation Update | v1.1 | 0/? | Not started | - |
