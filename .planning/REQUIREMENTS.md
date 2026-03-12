@@ -55,9 +55,9 @@
 
 ### Documentation
 
-- [ ] **DOCS-01**: Setup guide documents admin UI configuration flow (replaces forge variables set)
-- [ ] **DOCS-02**: Troubleshooting page covers configuration-related failure modes
-- [ ] **DOCS-03**: Marketplace listing reflects self-service configuration capability
+- [x] **DOCS-01**: Setup guide documents admin UI configuration flow (replaces forge variables set)
+- [x] **DOCS-02**: Troubleshooting page covers configuration-related failure modes
+- [x] **DOCS-03**: Marketplace listing reflects self-service configuration capability
 
 ## Future Requirements
 
@@ -113,9 +113,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STOR-01 | Phase 5: Admin Page & Storage Migration | Complete |
 | STOR-02 | Phase 5: Admin Page & Storage Migration | Complete |
 | STOR-03 | Phase 5: Admin Page & Storage Migration | Complete |
-| DOCS-01 | Phase 6: Documentation Update | Pending |
-| DOCS-02 | Phase 6: Documentation Update | Pending |
-| DOCS-03 | Phase 6: Documentation Update | Pending |
+| DOCS-01 | Phase 6: Documentation Update | Complete |
+| DOCS-02 | Phase 6: Documentation Update | Complete |
+| DOCS-03 | Phase 6: Documentation Update | Complete |
 
 **Coverage:**
 - v1.0 requirements: 16 total (all complete)
