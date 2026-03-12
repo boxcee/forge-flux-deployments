@@ -48,8 +48,8 @@
 ### Storage
 
 - [x] **STOR-01**: Secrets are stored per-installation using Forge KVS secret store
-- [ ] **STOR-02**: Webtrigger handlers read secrets from KVS with env var fallback for safe migration (KVS takes priority; `process.env` is checked only when KVS returns undefined)
-- [ ] **STOR-03**: Webhook returns clear error when secrets have not been configured
+- [x] **STOR-02**: Webtrigger handlers read secrets from KVS with env var fallback for safe migration (KVS takes priority; `process.env` is checked only when KVS returns undefined)
+- [x] **STOR-03**: Webhook returns clear error when secrets have not been configured
 
 > **Migration rationale for STOR-02 env var fallback:** Adding `storage:app` scope triggers a Forge major version bump requiring admin re-consent. During the re-consent gap, KVS calls may fail. The env var fallback ensures existing installations continue working until the admin approves new scopes and reconfigures via the admin UI. See Phase 5 research (Pitfall 1: breaking existing installations, Pitfall 2: scope change re-consent gap).
 
@@ -111,8 +111,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-03 | Phase 5: Admin Page & Storage Migration | Complete |
 | CONF-04 | Phase 5: Admin Page & Storage Migration | Complete |
 | STOR-01 | Phase 5: Admin Page & Storage Migration | Complete |
-| STOR-02 | Phase 5: Admin Page & Storage Migration | Pending |
-| STOR-03 | Phase 5: Admin Page & Storage Migration | Pending |
+| STOR-02 | Phase 5: Admin Page & Storage Migration | Complete |
+| STOR-03 | Phase 5: Admin Page & Storage Migration | Complete |
 | DOCS-01 | Phase 6: Documentation Update | Pending |
 | DOCS-02 | Phase 6: Documentation Update | Pending |
 | DOCS-03 | Phase 6: Documentation Update | Pending |
