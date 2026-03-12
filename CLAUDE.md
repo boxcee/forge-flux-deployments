@@ -35,3 +35,10 @@ Tests live in `src/__tests__/` and mirror source files. They mock `@forge/api` a
 - **FluxCD annotations** — The app reads HelmRelease annotations (`event.toolkit.fluxcd.io/jira`, `/env`, `/env-type`, `/url`). Flux strips the prefix in webhook payloads, so mapper supports both full and short keys. The `url` annotation is required by Jira's Deployments API. See README for full annotation table.
 - **HMAC secret** — Stored as Forge environment variable `WEBHOOK_SECRET`, set via `forge variables set`.
 - **Ignored reasons** — `UninstallSucceeded` and `DependencyNotReady` are silently skipped (204).
+
+## Forge Tunnel & Deploy Gotchas
+
+- **`forge tunnel` registers a persistent tunnel URL** with the Forge platform. Even after stopping the tunnel, the platform keeps routing the resource iframe to `localhost:800x`. This means **the admin page will not load without an active tunnel** in the development environment until a clean deploy clears the registration.
+- **Always `forge deploy` before `forge tunnel`** when adding new manifest modules (functions, resources, admin pages). The tunnel can only override functions that are already registered in the platform. New functions added only in the tunnel won't be found (404).
+- **`@forge/resolver` ESM interop** — The package exports CJS. `import Resolver from '@forge/resolver'` gives a namespace object in Node ESM, not the class. Use `const Resolver = ResolverModule.default || ResolverModule;` pattern if needed. Forge's bundler (webpack) may handle this differently from raw Node.
+- **Admin page location** — `jira:adminPage` modules appear under Jira Settings → Apps (left sidebar), NOT in the app overview/manage apps page. URL pattern: `/jira/settings/apps/{appId}/{envId}`.
