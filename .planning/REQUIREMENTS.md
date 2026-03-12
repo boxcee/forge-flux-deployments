@@ -48,8 +48,10 @@
 ### Storage
 
 - [ ] **STOR-01**: Secrets are stored per-installation using Forge KVS secret store
-- [ ] **STOR-02**: Webtrigger handlers read secrets from KVS instead of environment variables
+- [ ] **STOR-02**: Webtrigger handlers read secrets from KVS with env var fallback for safe migration (KVS takes priority; `process.env` is checked only when KVS returns undefined)
 - [ ] **STOR-03**: Webhook returns clear error when secrets have not been configured
+
+> **Migration rationale for STOR-02 env var fallback:** Adding `storage:app` scope triggers a Forge major version bump requiring admin re-consent. During the re-consent gap, KVS calls may fail. The env var fallback ensures existing installations continue working until the admin approves new scopes and reconfigures via the admin UI. See Phase 5 research (Pitfall 1: breaking existing installations, Pitfall 2: scope change re-consent gap).
 
 ### Documentation
 
@@ -77,7 +79,6 @@
 | Feature | Reason |
 |---------|--------|
 | Secret rotation / key management | Single active secret per installation is sufficient for v1.1 |
-| Environment variable fallback | Clean cut — existing installations must re-configure via admin UI |
 | Custom UI (React iframe) | UI Kit is sufficient for a settings form with two text fields |
 | Multi-tenant secret scoping | Forge KVS provides automatic per-installation isolation |
 | Marketing website beyond GitHub Pages | Marketplace listing + GitHub Pages is sufficient |
@@ -124,4 +125,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-12 after v1.1 roadmap creation*
+*Last updated: 2026-03-12 — moved env var fallback in-scope per research migration rationale*
