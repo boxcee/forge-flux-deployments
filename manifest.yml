@@ -28,12 +28,27 @@ modules:
       handler: index.handleFluxEvent
     - key: handleArgoEvent
       handler: index.handleArgoEvent
+    - key: resolver
+      handler: resolver.handler
+
+  jira:adminPage:
+    - key: admin-config-page
+      resource: admin-page
+      resolver:
+        function: resolver
+      render: native
+      title: GitOps Deployments
+
+resources:
+  - key: admin-page
+    path: src/frontend/index.jsx
 
 permissions:
   scopes:
     - write:deployment-info:jira
     - write:deployment:jira-software
     - read:deployment:jira-software
+    - storage:app
 
 app:
   runtime:
