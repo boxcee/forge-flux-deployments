@@ -12,8 +12,12 @@ const App = () => {
   const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    invoke('getConfigStatus').then(setStatus);
-    invoke('getWebtriggerUrls').then(setUrls);
+    invoke('getConfigStatus')
+      .then(setStatus)
+      .catch(err => { console.error('getConfigStatus error:', err); setFeedback({ type: 'error', msg: 'Failed to load config status: ' + String(err) }); });
+    invoke('getWebtriggerUrls')
+      .then(setUrls)
+      .catch(err => { console.error('getWebtriggerUrls error:', err); });
   }, []);
 
   const fluxForm = useForm();
@@ -21,20 +25,30 @@ const App = () => {
 
   const saveFlux = async (data) => {
     setFeedback(null);
-    const result = await invoke('setFluxSecret', { secret: data.fluxSecret });
-    setFeedback(result.success
-      ? { type: 'success', msg: 'FluxCD secret saved' }
-      : { type: 'error', msg: result.error });
-    if (result.success) setStatus(s => ({ ...s, flux: { configured: true } }));
+    try {
+      const result = await invoke('setFluxSecret', { secret: data.fluxSecret });
+      setFeedback(result.success
+        ? { type: 'success', msg: 'FluxCD secret saved' }
+        : { type: 'error', msg: result.error });
+      if (result.success) setStatus(s => ({ ...s, flux: { configured: true } }));
+    } catch (err) {
+      console.error('saveFlux error:', err);
+      setFeedback({ type: 'error', msg: 'Error: ' + String(err) });
+    }
   };
 
   const saveArgo = async (data) => {
     setFeedback(null);
-    const result = await invoke('setArgoSecret', { token: data.argoToken });
-    setFeedback(result.success
-      ? { type: 'success', msg: 'ArgoCD token saved' }
-      : { type: 'error', msg: result.error });
-    if (result.success) setStatus(s => ({ ...s, argocd: { configured: true } }));
+    try {
+      const result = await invoke('setArgoSecret', { token: data.argoToken });
+      setFeedback(result.success
+        ? { type: 'success', msg: 'ArgoCD token saved' }
+        : { type: 'error', msg: result.error });
+      if (result.success) setStatus(s => ({ ...s, argocd: { configured: true } }));
+    } catch (err) {
+      console.error('saveArgo error:', err);
+      setFeedback({ type: 'error', msg: 'Error: ' + String(err) });
+    }
   };
 
   return (
