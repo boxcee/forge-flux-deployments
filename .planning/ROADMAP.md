@@ -25,7 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 ### v1.1 Admin Config UX
 
-- [ ] **Phase 5: Admin Page & Storage Migration** - Build admin settings UI, wire KVS secret storage, migrate handlers from env vars to KVS
+- [x] **Phase 5: Admin Page & Storage Migration** - Build admin settings UI, wire KVS secret storage, migrate handlers from env vars to KVS
 - [ ] **Phase 6: Documentation Update** - Rewrite setup guide for admin UI flow, update troubleshooting and marketplace listing
 
 ## Phase Details
@@ -108,8 +108,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Backend foundation: storage abstraction (KVS + env fallback) and Forge resolver
-- [ ] 05-02-PLAN.md -- Admin page UI, manifest wiring, and handler migration to KVS storage
+- [x] 05-01-PLAN.md -- Backend foundation: storage abstraction (KVS + env fallback) and Forge resolver
+- [x] 05-02-PLAN.md -- Admin page UI, manifest wiring, and handler migration to KVS storage
 
 ### Phase 6: Documentation Update
 **Goal**: Setup guide, troubleshooting page, and marketplace listing accurately describe the admin UI configuration flow
@@ -135,5 +135,5 @@ Phases execute in numeric order: 5 -> 6
 | 2. Content Accuracy | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 3. Legal & Compliance | v1.0 | 2/2 | Complete | 2026-03-11 |
 | 4. Marketplace Listing | v1.0 | 1/1 | Complete | 2026-03-12 |
-| 5. Admin Page & Storage Migration | v1.1 | 0/2 | Not started | - |
+| 5. Admin Page & Storage Migration | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Documentation Update | v1.1 | 0/? | Not started | - |
