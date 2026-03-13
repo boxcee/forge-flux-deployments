@@ -1,10 +1,19 @@
-# Marketplace Listing -- GitOps Deployments for Jira
+# Marketplace Listing -- GitOps Deployments
 
 ## App Name
-GitOps Deployments for Jira
+GitOps Deployments
 
-## Summary (170 chars max)
-Track FluxCD and ArgoCD deployments directly in Jira issues. Configure secrets in Jira, no CLI required. See deployment status and revisions in the Deployments panel.
+## Tagline (130 chars max, no ending punctuation)
+Track FluxCD and ArgoCD deployments directly in Jira issues — configure secrets in the UI, no CLI required
+
+## App Summary (250 chars max)
+GitOps Deployments connects your FluxCD and ArgoCD pipelines to Jira's native Deployments panel. Deployment status, environment tracking, and revision history appear automatically on Jira issues when your CD tool deploys a change. Runs on Forge.
+
+## App Stores Personal Data
+No
+
+## More Details (1000 chars max)
+Runs entirely on Atlassian Forge — no external servers, agents, or infrastructure to manage. Supports two major GitOps tools: FluxCD (HMAC-signed webhooks) and ArgoCD (bearer token authentication). Webhook secrets are configured directly in Jira's settings page. English language only.
 
 ## Description
 
@@ -155,3 +164,29 @@ File: `docs/assets/icon.png`
 Dimensions: 144 x 144 px
 Format: PNG (RGBA)
 Background: Blue chiclet (rounded rectangle)
+
+---
+
+## Version Details
+
+| Field | Value |
+|-------|-------|
+| Beta release | No |
+| Version number | 3.0.0 |
+| Compatible apps | Jira Cloud (any version) |
+| Compatible with Jira Service Management | Yes |
+| Compatible with Jira | Yes |
+| Release summary | Initial release — FluxCD and ArgoCD deployment tracking for Jira |
+| Release notes | Initial release. Track FluxCD (HMAC webhooks) and ArgoCD (bearer token) deployments in Jira's native Deployments panel. Configure webhook secrets via the admin settings page. Supports deployment status, environment tracking, and revision history. |
+
+## License and Support
+
+| Field | Value |
+|-------|-------|
+| License | Paid via Atlassian |
+| App version supported | Yes |
+| Documentation | https://github.com/boxcee/forge-flux-deployments#readme |
+| Standard EULA (Bonterms) | Yes |
+| Data security and privacy statement | https://boxcee.github.io/forge-flux-deployments/privacy-policy |
+| Atlassian Community | Enabled |
+| Track work items | https://github.com/boxcee/forge-flux-deployments/issues |
