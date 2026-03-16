@@ -113,4 +113,4 @@ Plans:
 | 7. Event Log Backend | v1.2 | 0/2 | Planning | - |
 | 8. Admin UI — Event Log Tab | v1.2 | 1/1 | Complete | 2026-03-16 |
 | 9. Release Wrap-up | v1.2 | 0/1 | Not started | - |
-| 10. Fix ArgoCD Source Value Mismatch | 1/1 | Complete   | 2026-03-16 | - |
+| 10. Fix ArgoCD Source Value Mismatch | 1/1 | Complete    | 2026-03-16 | - |
