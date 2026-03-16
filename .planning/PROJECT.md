@@ -24,14 +24,15 @@ Customers can install the app and configure their webhook secrets entirely throu
 - ✓ Webhook handlers migrated from env vars to KVS storage — v1.1
 - ✓ 503 error when secrets not configured — v1.1
 - ✓ Setup guide, troubleshooting, marketplace listing updated for admin UI flow — v1.1
+- ✓ SQL-backed webhook event log with per-invocation recording — v1.2
+- ✓ Admin page Event Log tab with stats strip and filterable table — v1.2
+- ✓ Scheduled trigger for 30-day log retention cleanup — v1.2
+- ✓ CHANGELOG.md tracking releases — v1.2
+- ✓ Version bump to 1.2.0 in package.json — v1.2
 
 ### Active
 
-- [ ] SQL-backed webhook event log with per-invocation recording — v1.2
-- [ ] Admin page Event Log tab with stats strip and filterable table — v1.2
-- [ ] Scheduled trigger for 30-day log retention cleanup — v1.2
-- [ ] CHANGELOG.md tracking releases — v1.2
-- [ ] Version bump to 1.2.0 in package.json — v1.2
+(None — define in next milestone via `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -44,17 +45,20 @@ Customers can install the app and configure their webhook secrets entirely throu
 
 ## Context
 
-Shipped v1.1 with 2,172 LOC JavaScript/JSX across 4 source modules + admin page frontend.
-Tech stack: Forge (Node.js 22, ESM), @forge/kvs, @forge/resolver, @forge/react (UI Kit).
-148 tests passing across 8 test suites.
+Shipped v1.2 with 2,611 LOC JavaScript/JSX across 5 source modules + admin page frontend.
+Tech stack: Forge (Node.js 22, ESM), @forge/kvs, @forge/sql, @forge/resolver, @forge/react (UI Kit).
+170 tests passing across 10 test suites.
 GitHub repo: `boxcee/forge-flux-deployments`
 Docs site: `https://boxcee.github.io/forge-flux-deployments/`
+CI/CD: release-please + GitHub Actions (dev deploy on push, prod deploy on release)
 
 **Known issues:**
 - `deleteFluxSecret`/`deleteArgoSecret` resolver handlers exist but no UI delete button
-- `storage:app` scope addition triggers re-consent for existing installations
+- `storage:app` + `sql:read`/`sql:write` scopes trigger re-consent for existing installations
 - UI Kit has no password TextField — secret value visible while typing (not redisplayed after save)
 - KYC/KYB verification blocks actual Marketplace submission
+- `isLoading={false}` hardcoded on DynamicTable — no loading overlay during filter re-fetches
+- `getStats()` enumerates specific HTTP codes rather than ranges
 
 ## Constraints
 
@@ -78,9 +82,11 @@ Docs site: `https://boxcee.github.io/forge-flux-deployments/`
 | Combined admin page + handler migration | Neither is useful alone — single phase | ✓ Good |
 | forge variables set as developer fallback | Not removed; storage.js env fallback supports it | ✓ Good |
 
-| Forge SQL for event log | Queryable storage, proper indexing, unlimited rows — right tool for a log | — Pending |
-| Keyset pagination over OFFSET | Correct under concurrent writes, no skipped/duplicate rows | — Pending |
-| Awaited log writes with swallowed errors | Ensures write completes before Forge runtime reclaims context | — Pending |
+| Forge SQL for event log | Queryable storage, proper indexing, unlimited rows — right tool for a log | ✓ Good |
+| Keyset pagination over OFFSET | Correct under concurrent writes, no skipped/duplicate rows | ✓ Good |
+| Awaited log writes with swallowed errors | Ensures write completes before Forge runtime reclaims context | ✓ Good |
+| release-please manifest mode | Automated versioning, changelog generation, bootstrapped at v1.2.0 | ✓ Good |
+| Backend source fix over frontend | Frontend `'argocd'` was correct, backend `'argo'` was the bug | ✓ Good |
 
 ---
-*Last updated: 2026-03-16 after v1.2 milestone start*
+*Last updated: 2026-03-16 after v1.2 milestone*

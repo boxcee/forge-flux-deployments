@@ -1,5 +1,26 @@
 # Milestones
 
+## v1.2 Webhook Event Log (Shipped: 2026-03-16)
+
+**Phases:** 7-10 | **Plans:** 5 | **Tasks:** 12 | **Tests:** 170 (22 new)
+
+**Delivered:** Admins can see a live event log of all webhook activity — accepted, failed, and skipped — directly in the Jira admin page.
+
+**Key accomplishments:**
+- SQL-backed webhook event log with lazy schema init, keyset pagination, and 30-day auto-cleanup
+- Admin page Event Log tab with 24h stats strip, source filtering, and status code badges
+- Both Flux and ArgoCD handlers log at every exit point with swallowed-error pattern
+- release-please automation with GitHub Actions CI/CD (dev on push, prod on release)
+- ArgoCD source value alignment fixed to ensure filter correctness across all layers
+
+**Git range:** `749fd7e..895188c` (29 commits, 35 files, +3,865/-112 lines)
+
+**Tech debt:**
+- `isLoading={false}` hardcoded on DynamicTable — loading overlay absent during source filter re-fetches
+- `getStats()` enumerates specific HTTP codes rather than ranges — brittle if new status codes are added
+
+---
+
 ## v1.0 Marketplace Readiness (Shipped: 2026-03-12)
 
 **Phases:** 1-4 | **Plans:** 7
