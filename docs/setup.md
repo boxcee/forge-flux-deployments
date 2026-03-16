@@ -247,3 +247,34 @@ The notification template sends these top-level fields:
 | `Error` | `failed` |
 | `Running` | `in_progress` |
 | Other | `unknown` |
+
+---
+
+## 5. Event Log
+
+The app records every webhook invocation in a local event log. Admins can view this log directly in the Jira admin page.
+
+### Viewing the Event Log
+
+1. Go to **Jira Settings** (gear icon) > **Apps** > **GitOps Deployments** in the left sidebar.
+2. Click the **Event Log** tab.
+
+### What you'll see
+
+- **Stats strip** -- Accepted, failed, and skipped event counts for the last 24 hours.
+- **Source filter** -- Filter events by source (All, Flux, Argo).
+- **Event table** -- Each row shows timestamp, source, release name, namespace, environment, status code, and deployment state.
+- **Pagination** -- The table loads 25 rows at a time. Click **Load more** to fetch additional rows.
+
+### Status codes
+
+| Code | Meaning | Badge color |
+|------|---------|-------------|
+| 200 | Deployment record created | Green |
+| 204 | Event skipped (missing annotations or ignored reason) | Grey |
+| 4xx | Client error (auth failure, bad request) | Red |
+| 5xx | Server error | Red |
+
+### Retention
+
+Events are automatically deleted after 30 days. A scheduled job runs daily to prune old records.
