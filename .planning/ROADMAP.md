@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 Marketplace Readiness** — Phases 1-4 (shipped 2026-03-12)
 - ✅ **v1.1 Admin Config UX** — Phases 5-6 (shipped 2026-03-12)
-- 🚧 **v1.2 Webhook Event Log** — Phases 7-9 (in progress)
+- 🚧 **v1.2 Webhook Event Log** — Phases 7-10 (in progress)
 
 ## Phases
 
@@ -39,6 +39,7 @@
 - [ ] **Phase 7: Event Log Backend** — SQL schema, log writes, scheduled cleanup, and manifest SQL scopes
 - [ ] **Phase 8: Admin UI — Event Log Tab** — Tabbed admin page with stats strip, filterable table, and keyset pagination
 - [ ] **Phase 9: Release Wrap-up** — CHANGELOG, version bump, documentation update
+- [ ] **Phase 10: Fix ArgoCD Source Value Mismatch** — Align source values between backend and frontend to fix Argo filter
 
 ## Phase Details
 
@@ -86,6 +87,19 @@ Plans:
 Plans:
 - [ ] 09-01-PLAN.md — CHANGELOG, version bump, release-please config, CI/CD workflows, event log docs
 
+### Phase 10: Fix ArgoCD Source Value Mismatch
+**Goal**: Argo source filter works correctly in admin UI — stats strip and event table return matching rows
+**Depends on**: Phase 8
+**Requirements**: UI-02, UI-03
+**Gap Closure:** Closes gaps from v1.2 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. Selecting "Argo" source filter in admin UI returns ArgoCD events in both stats strip and event table
+  2. Source value stored by handler matches the value sent by frontend filter
+**Plans:** 1 plan
+
+Plans:
+- [ ] 10-01-PLAN.md — Align ArgoCD source value and update tests
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -99,3 +113,4 @@ Plans:
 | 7. Event Log Backend | v1.2 | 0/2 | Planning | - |
 | 8. Admin UI — Event Log Tab | v1.2 | 1/1 | Complete | 2026-03-16 |
 | 9. Release Wrap-up | v1.2 | 0/1 | Not started | - |
+| 10. Fix ArgoCD Source Value Mismatch | v1.2 | 0/1 | Not started | - |
