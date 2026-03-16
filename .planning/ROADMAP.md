@@ -52,7 +52,11 @@
   3. A log write failure does not change the webhook HTTP response (same status code with or without SQL available)
   4. `submitAndRespond` returns accepted/rejected/unknown counts that the handler passes to `logEvent`
   5. A scheduled trigger runs daily and deletes rows older than 30 days without affecting live traffic
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Event log SQL module + tests
+- [ ] 07-02-PLAN.md — Handler integration, manifest scopes, resolver endpoints
 
 ### Phase 8: Admin UI — Event Log Tab
 **Goal**: Admins can view, filter, and paginate webhook event history from the Jira admin page
@@ -86,6 +90,6 @@
 | 4. Marketplace Listing | v1.0 | 1/1 | Complete | 2026-03-12 |
 | 5. Admin Page & Storage Migration | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Documentation Update | v1.1 | 1/1 | Complete | 2026-03-12 |
-| 7. Event Log Backend | v1.2 | 0/? | Not started | - |
+| 7. Event Log Backend | v1.2 | 0/2 | Planning | - |
 | 8. Admin UI — Event Log Tab | v1.2 | 0/? | Not started | - |
 | 9. Release Wrap-up | v1.2 | 0/? | Not started | - |
