@@ -26,12 +26,12 @@ Requirements for v1.2 Webhook Event Log milestone. Each maps to roadmap phases.
 
 - [x] **MAINT-01**: Scheduled trigger deletes events older than 30 days (daily)
 - [x] **MAINT-02**: `sql:read`/`sql:write` permission scopes added to manifest
-- [ ] **MAINT-03**: CHANGELOG.md created tracking v1.0, v1.1, v1.2
+- [x] **MAINT-03**: CHANGELOG.md created tracking v1.0, v1.1, v1.2
 
 ### Housekeeping
 
-- [ ] **HK-01**: package.json version bumped to 1.2.0
-- [ ] **HK-02**: Documentation updated for event log feature
+- [x] **HK-01**: package.json version bumped to 1.2.0
+- [x] **HK-02**: Documentation updated for event log feature
 
 ## Future Requirements
 
@@ -75,9 +75,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-05 | Phase 8 | Complete |
 | MAINT-01 | Phase 7 | Complete |
 | MAINT-02 | Phase 7 | Complete |
-| MAINT-03 | Phase 9 | Pending |
-| HK-01 | Phase 9 | Pending |
-| HK-02 | Phase 9 | Pending |
+| MAINT-03 | Phase 9 | Complete |
+| HK-01 | Phase 9 | Complete |
+| HK-02 | Phase 9 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 14 total

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Webhook Event Log
 status: completed
-stopped_at: Completed 08-01 Event Log Tab
-last_updated: "2026-03-16T12:49:58.109Z"
-last_activity: 2026-03-16 — Completed 08-01 Event Log Tab
+stopped_at: Completed 09-01 Release Wrapup
+last_updated: "2026-03-16T15:27:19Z"
+last_activity: 2026-03-16 — Completed 09-01 Release Wrapup
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 3
+  total_plans: 4
+  completed_plans: 4
   percent: 100
 ---
 
@@ -21,29 +21,30 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Customers can install the app and configure their webhook secrets entirely through the Atlassian UI — no CLI access or vendor intervention required.
-**Current focus:** Phase 8 — Admin UI Event Log Tab
+**Current focus:** Phase 9 — Release Wrapup (Complete)
 
 ## Current Position
 
-Phase: 8 of 9 (Admin UI — Event Log Tab)
+Phase: 9 of 9 (Release Wrapup)
 Plan: 1 of 1 complete
-Status: Phase Complete
-Last activity: 2026-03-16 — Completed 08-01 Event Log Tab
+Status: Milestone Complete
+Last activity: 2026-03-16 — Completed 09-01 Release Wrapup
 
 Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2 (v1.2)
-- Average duration: 3min
-- Total execution time: 6min
+- Total plans completed: 4 (v1.2)
+- Average duration: 4min
+- Total execution time: 16min
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 07    | 01   | 3min     | 2     | 3     |
 | 07    | 02   | 3min     | 2     | 5     |
 | 08    | 01   | 8min     | 3     | 1     |
+| 09    | 01   | 2min     | 3     | 7     |
 
 *Updated after each plan completion*
 
@@ -64,6 +65,8 @@ Recent decisions affecting current work:
 - [Phase 07]: Empty catch blocks use /* swallow */ comment for ESLint no-empty rule
 - [Phase 08]: Single-file EventLogPanel in index.jsx — keeps Forge frontend simple
 - [Phase 08]: Keyset pagination via beforeTimestamp + beforeId from last visible row
+- [Phase 09]: release-please manifest mode bootstrapped at v1.2.0
+- [Phase 09]: @forge/cli@12 pinned in CI; conditional deploy (push->dev, release->prod)
 
 ### Blockers/Concerns
 
@@ -72,6 +75,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-16T18:00:00.000Z
-Stopped at: Completed 08-01 Event Log Tab
-Resume file: .planning/phases/08-admin-ui-event-log-tab/08-01-SUMMARY.md
+Last session: 2026-03-16T15:27:19Z
+Stopped at: Completed 09-01 Release Wrapup — Milestone v1.2 complete
+Resume file: .planning/phases/09-release-wrapup/09-01-SUMMARY.md
