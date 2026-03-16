@@ -81,7 +81,10 @@ Plans:
   1. CHANGELOG.md exists and documents v1.0, v1.1, and v1.2 with accurate change summaries
   2. package.json reports version 1.2.0
   3. Documentation reflects the event log feature so new users can find and understand it
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 09-01-PLAN.md — CHANGELOG, version bump, release-please config, CI/CD workflows, event log docs
 
 ## Progress
 
@@ -95,4 +98,4 @@ Plans:
 | 6. Documentation Update | v1.1 | 1/1 | Complete | 2026-03-12 |
 | 7. Event Log Backend | v1.2 | 0/2 | Planning | - |
 | 8. Admin UI — Event Log Tab | v1.2 | 1/1 | Complete | 2026-03-16 |
-| 9. Release Wrap-up | v1.2 | 0/? | Not started | - |
+| 9. Release Wrap-up | v1.2 | 0/1 | Not started | - |
