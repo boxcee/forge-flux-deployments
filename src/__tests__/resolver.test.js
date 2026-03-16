@@ -15,6 +15,14 @@ jest.unstable_mockModule('../storage.js', () => ({
   deleteArgoSecret: mockDeleteArgoSecret,
 }));
 
+// Mock event-log.js
+const mockGetEvents = jest.fn();
+const mockGetStats = jest.fn();
+jest.unstable_mockModule('../event-log.js', () => ({
+  getEvents: mockGetEvents,
+  getStats: mockGetStats,
+}));
+
 // Mock @forge/api
 const mockGetUrl = jest.fn();
 jest.unstable_mockModule('@forge/api', () => ({
@@ -50,6 +58,8 @@ describe('resolver', () => {
     mockDeleteFluxSecret.mockReset();
     mockDeleteArgoSecret.mockReset();
     mockGetUrl.mockReset();
+    mockGetEvents.mockReset();
+    mockGetStats.mockReset();
   });
 
   test('handler is the resolver definitions', () => {
@@ -190,6 +200,58 @@ describe('resolver', () => {
       const result = await invoke('deleteArgoSecret');
       expect(result).toEqual({ success: true });
       expect(mockDeleteArgoSecret).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getEventLog', () => {
+    test('calls getEvents with source filter', async () => {
+      mockGetEvents.mockResolvedValue({ events: [], hasMore: false });
+      const result = await invoke('getEventLog', { source: 'flux' });
+      expect(mockGetEvents).toHaveBeenCalledWith({
+        source: 'flux',
+        beforeTimestamp: undefined,
+        beforeId: undefined,
+      });
+      expect(result).toEqual({ events: [], hasMore: false });
+    });
+
+    test('passes pagination cursor', async () => {
+      mockGetEvents.mockResolvedValue({ events: [], hasMore: false });
+      await invoke('getEventLog', {
+        beforeTimestamp: '2026-01-01T00:00:00Z',
+        beforeId: '42',
+      });
+      expect(mockGetEvents).toHaveBeenCalledWith(expect.objectContaining({
+        beforeTimestamp: '2026-01-01T00:00:00Z',
+        beforeId: 42,
+      }));
+    });
+
+    test('handles empty payload', async () => {
+      mockGetEvents.mockResolvedValue({ events: [], hasMore: false });
+      const result = await invoke('getEventLog');
+      expect(mockGetEvents).toHaveBeenCalledWith({
+        source: undefined,
+        beforeTimestamp: undefined,
+        beforeId: undefined,
+      });
+      expect(result).toEqual({ events: [], hasMore: false });
+    });
+  });
+
+  describe('getEventStats', () => {
+    test('returns stats with source filter', async () => {
+      mockGetStats.mockResolvedValue({ accepted: 10, failed: 2, skipped: 5 });
+      const result = await invoke('getEventStats', { source: 'argo' });
+      expect(mockGetStats).toHaveBeenCalledWith({ source: 'argo' });
+      expect(result).toEqual({ accepted: 10, failed: 2, skipped: 5 });
+    });
+
+    test('handles empty payload', async () => {
+      mockGetStats.mockResolvedValue({ accepted: 0, failed: 0, skipped: 0 });
+      const result = await invoke('getEventStats');
+      expect(mockGetStats).toHaveBeenCalledWith({ source: undefined });
+      expect(result).toEqual({ accepted: 0, failed: 0, skipped: 0 });
     });
   });
 });

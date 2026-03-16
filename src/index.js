@@ -42,7 +42,7 @@ export const handleFluxEvent = async (event) => {
     console.warn('FluxCD webhook secret not configured');
     logParams.statusCode = 503;
     logParams.error = 'Webhook secret not configured';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 503, body: 'Webhook secret not configured. Configure via app admin page.' };
   }
 
@@ -51,7 +51,7 @@ export const handleFluxEvent = async (event) => {
     console.warn('HMAC verification failed');
     logParams.statusCode = 401;
     logParams.error = 'HMAC verification failed';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 401, body: 'Unauthorized' };
   }
 
@@ -62,7 +62,7 @@ export const handleFluxEvent = async (event) => {
   } catch {
     logParams.statusCode = 400;
     logParams.error = 'Malformed JSON';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 400, body: 'Malformed JSON' };
   }
 
@@ -76,7 +76,7 @@ export const handleFluxEvent = async (event) => {
   if (!meta.issueKeys) {
     console.info('No jira annotation — skipping', { name: meta.helmReleaseName });
     logParams.statusCode = 204;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 204, body: '' };
   }
 
@@ -84,7 +84,7 @@ export const handleFluxEvent = async (event) => {
   if (!meta.env) {
     logParams.statusCode = 400;
     logParams.error = 'Missing env annotation';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 400, body: 'Missing env annotation' };
   }
 
@@ -92,7 +92,7 @@ export const handleFluxEvent = async (event) => {
   if (IGNORED_REASONS.has(fluxEvent.reason)) {
     console.info('Ignored reason', { reason: fluxEvent.reason });
     logParams.statusCode = 204;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 204, body: '' };
   }
 
@@ -106,13 +106,13 @@ export const handleFluxEvent = async (event) => {
     logParams.accepted = counts.accepted;
     logParams.rejected = counts.rejected;
     logParams.unknownKeys = counts.unknownKeys;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return response;
   } catch (err) {
     console.error('Jira API call failed', err.message);
     logParams.statusCode = 502;
     logParams.error = err.message;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 502, body: 'Upstream API error' };
   }
 };
@@ -128,7 +128,7 @@ export const handleArgoEvent = async (event) => {
     console.warn('ArgoCD webhook token not configured');
     logParams.statusCode = 503;
     logParams.error = 'Webhook secret not configured';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 503, body: 'Webhook secret not configured. Configure via app admin page.' };
   }
 
@@ -137,7 +137,7 @@ export const handleArgoEvent = async (event) => {
     console.warn('Bearer token verification failed');
     logParams.statusCode = 401;
     logParams.error = 'Bearer token verification failed';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 401, body: 'Unauthorized' };
   }
 
@@ -148,7 +148,7 @@ export const handleArgoEvent = async (event) => {
   } catch {
     logParams.statusCode = 400;
     logParams.error = 'Malformed JSON';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 400, body: 'Malformed JSON' };
   }
 
@@ -162,7 +162,7 @@ export const handleArgoEvent = async (event) => {
   if (!meta.issueKeys) {
     console.info('No jira annotation — skipping', { name: meta.appName });
     logParams.statusCode = 204;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 204, body: '' };
   }
 
@@ -170,7 +170,7 @@ export const handleArgoEvent = async (event) => {
   if (!meta.env) {
     logParams.statusCode = 400;
     logParams.error = 'Missing env annotation';
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 400, body: 'Missing env annotation' };
   }
 
@@ -184,13 +184,13 @@ export const handleArgoEvent = async (event) => {
     logParams.accepted = counts.accepted;
     logParams.rejected = counts.rejected;
     logParams.unknownKeys = counts.unknownKeys;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return response;
   } catch (err) {
     console.error('Jira API call failed', err.message);
     logParams.statusCode = 502;
     logParams.error = err.message;
-    try { await logEvent(logParams); } catch {}
+    try { await logEvent(logParams); } catch { /* swallow */ }
     return { statusCode: 502, body: 'Upstream API error' };
   }
 };

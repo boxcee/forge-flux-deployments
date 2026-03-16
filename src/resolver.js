@@ -7,6 +7,7 @@ import {
   deleteFluxSecret as storageDeleteFluxSecret,
   deleteArgoSecret as storageDeleteArgoSecret,
 } from './storage.js';
+import { getEvents, getStats } from './event-log.js';
 
 const resolver = new Resolver();
 
@@ -55,6 +56,22 @@ resolver.define('deleteFluxSecret', async () => {
 resolver.define('deleteArgoSecret', async () => {
   await storageDeleteArgoSecret();
   return { success: true };
+});
+
+resolver.define('getEventLog', async ({ payload }) => {
+  const { source, beforeTimestamp, beforeId } = payload ?? {};
+  return await getEvents({
+    source: source || undefined,
+    beforeTimestamp: beforeTimestamp || undefined,
+    beforeId: beforeId ? Number(beforeId) : undefined,
+  });
+});
+
+resolver.define('getEventStats', async ({ payload }) => {
+  const { source } = payload ?? {};
+  return await getStats({
+    source: source || undefined,
+  });
 });
 
 export const handler = resolver.getDefinitions();

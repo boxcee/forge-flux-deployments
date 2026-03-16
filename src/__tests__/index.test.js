@@ -24,6 +24,12 @@ jest.unstable_mockModule('../storage.js', () => ({
   getArgoSecret: mockGetArgoSecret,
 }));
 
+// Mock event-log.js
+const mockLogEvent = jest.fn();
+jest.unstable_mockModule('../event-log.js', () => ({
+  logEvent: mockLogEvent,
+}));
+
 const { handleFluxEvent, handleArgoEvent } = await import('../index.js');
 
 const validFluxEvent = {
@@ -51,6 +57,8 @@ describe('handleFluxEvent', () => {
   beforeEach(() => {
     mockRequestJira.mockReset();
     mockGetFluxSecret.mockReset();
+    mockLogEvent.mockReset();
+    mockLogEvent.mockResolvedValue(undefined);
     mockGetFluxSecret.mockResolvedValue(SECRET);
     mockRequestJira.mockResolvedValue({
       ok: true,
@@ -120,6 +128,8 @@ describe('handleFluxEvent', () => {
     const result = await handleFluxEvent(event);
     expect(result.statusCode).toBe(200);
     expect(mockRequestJira).toHaveBeenCalledTimes(1);
+    expect(mockLogEvent).toHaveBeenCalledTimes(1);
+    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'flux', statusCode: 200 }));
   });
 
   test('returns 502 when Jira API fails', async () => {
@@ -132,6 +142,16 @@ describe('handleFluxEvent', () => {
     const event = makeEvent(body);
     const result = await handleFluxEvent(event);
     expect(result.statusCode).toBe(502);
+    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'flux', statusCode: 502 }));
+  });
+
+  test('logs event even when logEvent throws', async () => {
+    mockLogEvent.mockRejectedValueOnce(new Error('SQL down'));
+    const body = JSON.stringify(validFluxEvent);
+    const event = makeEvent(body);
+    const result = await handleFluxEvent(event);
+    expect(result.statusCode).toBe(200);
+    expect(mockLogEvent).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -163,6 +183,8 @@ describe('handleArgoEvent', () => {
   beforeEach(() => {
     mockRequestJira.mockReset();
     mockGetArgoSecret.mockReset();
+    mockLogEvent.mockReset();
+    mockLogEvent.mockResolvedValue(undefined);
     mockGetArgoSecret.mockResolvedValue('test-argo-token');
     mockRequestJira.mockResolvedValue({
       ok: true,
@@ -233,6 +255,8 @@ describe('handleArgoEvent', () => {
     const result = await handleArgoEvent(event);
     expect(result.statusCode).toBe(200);
     expect(mockRequestJira).toHaveBeenCalledTimes(1);
+    expect(mockLogEvent).toHaveBeenCalledTimes(1);
+    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argo', statusCode: 200 }));
   });
 
   test('returns 502 when Jira API fails', async () => {
@@ -245,5 +269,15 @@ describe('handleArgoEvent', () => {
     const event = makeArgoEvent(body);
     const result = await handleArgoEvent(event);
     expect(result.statusCode).toBe(502);
+    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argo', statusCode: 502 }));
+  });
+
+  test('logs event even when logEvent throws', async () => {
+    mockLogEvent.mockRejectedValueOnce(new Error('SQL down'));
+    const body = JSON.stringify(validArgoPayload);
+    const event = makeArgoEvent(body);
+    const result = await handleArgoEvent(event);
+    expect(result.statusCode).toBe(200);
+    expect(mockLogEvent).toHaveBeenCalledTimes(1);
   });
 });
