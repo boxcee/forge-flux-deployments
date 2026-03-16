@@ -11,8 +11,8 @@ Requirements for v1.2 Webhook Event Log milestone. Each maps to roadmap phases.
 
 - [x] **LOG-01**: Every webhook invocation writes a summary record to Forge SQL (timestamp, source, status, release name, namespace, env, issue keys, deployment state, Jira API counts, error)
 - [x] **LOG-02**: Schema initializes lazily on first write via `CREATE TABLE IF NOT EXISTS`
-- [ ] **LOG-03**: Log writes are awaited with swallowed errors — never affect webhook response
-- [ ] **LOG-04**: `submitAndRespond` refactored to expose Jira API accepted/rejected/unknown counts
+- [x] **LOG-03**: Log writes are awaited with swallowed errors — never affect webhook response
+- [x] **LOG-04**: `submitAndRespond` refactored to expose Jira API accepted/rejected/unknown counts
 
 ### Admin UI
 
@@ -25,7 +25,7 @@ Requirements for v1.2 Webhook Event Log milestone. Each maps to roadmap phases.
 ### Maintenance
 
 - [x] **MAINT-01**: Scheduled trigger deletes events older than 30 days (daily)
-- [ ] **MAINT-02**: `sql:read`/`sql:write` permission scopes added to manifest
+- [x] **MAINT-02**: `sql:read`/`sql:write` permission scopes added to manifest
 - [ ] **MAINT-03**: CHANGELOG.md created tracking v1.0, v1.1, v1.2
 
 ### Housekeeping
@@ -66,15 +66,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | LOG-01 | Phase 7 | Complete |
 | LOG-02 | Phase 7 | Complete |
-| LOG-03 | Phase 7 | Pending |
-| LOG-04 | Phase 7 | Pending |
+| LOG-03 | Phase 7 | Complete |
+| LOG-04 | Phase 7 | Complete |
 | UI-01 | Phase 8 | Pending |
 | UI-02 | Phase 8 | Pending |
 | UI-03 | Phase 8 | Pending |
 | UI-04 | Phase 8 | Pending |
 | UI-05 | Phase 8 | Pending |
 | MAINT-01 | Phase 7 | Complete |
-| MAINT-02 | Phase 7 | Pending |
+| MAINT-02 | Phase 7 | Complete |
 | MAINT-03 | Phase 9 | Pending |
 | HK-01 | Phase 9 | Pending |
 | HK-02 | Phase 9 | Pending |
