@@ -71,7 +71,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 08-01-PLAN.md — Tabbed layout, stats strip, filterable table, keyset pagination
+- [x] 08-01-PLAN.md — Tabbed layout, stats strip, filterable table, keyset pagination
 
 ### Phase 9: Release Wrap-up
 **Goal**: v1.2 is documented and versioned for release
@@ -94,5 +94,5 @@ Plans:
 | 5. Admin Page & Storage Migration | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Documentation Update | v1.1 | 1/1 | Complete | 2026-03-12 |
 | 7. Event Log Backend | v1.2 | 0/2 | Planning | - |
-| 8. Admin UI — Event Log Tab | v1.2 | 0/1 | Planning | - |
+| 8. Admin UI — Event Log Tab | v1.2 | 1/1 | Complete | 2026-03-16 |
 | 9. Release Wrap-up | v1.2 | 0/? | Not started | - |

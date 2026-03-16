@@ -16,11 +16,11 @@ Requirements for v1.2 Webhook Event Log milestone. Each maps to roadmap phases.
 
 ### Admin UI
 
-- [ ] **UI-01**: Admin page uses tabbed layout (Settings tab + Event Log tab)
-- [ ] **UI-02**: Event Log tab shows 24h stats strip (accepted, failed, skipped counts)
-- [ ] **UI-03**: Event Log tab shows filterable table (source filter: All/Flux/Argo)
-- [ ] **UI-04**: Table uses keyset pagination (25 rows, "Load more")
-- [ ] **UI-05**: Status codes color-coded (200 green, 204 grey, 4xx/5xx red)
+- [x] **UI-01**: Admin page uses tabbed layout (Settings tab + Event Log tab)
+- [x] **UI-02**: Event Log tab shows 24h stats strip (accepted, failed, skipped counts)
+- [x] **UI-03**: Event Log tab shows filterable table (source filter: All/Flux/Argo)
+- [x] **UI-04**: Table uses keyset pagination (25 rows, "Load more")
+- [x] **UI-05**: Status codes color-coded (200 green, 204 grey, 4xx/5xx red)
 
 ### Maintenance
 
@@ -68,11 +68,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOG-02 | Phase 7 | Complete |
 | LOG-03 | Phase 7 | Complete |
 | LOG-04 | Phase 7 | Complete |
-| UI-01 | Phase 8 | Pending |
-| UI-02 | Phase 8 | Pending |
-| UI-03 | Phase 8 | Pending |
-| UI-04 | Phase 8 | Pending |
-| UI-05 | Phase 8 | Pending |
+| UI-01 | Phase 8 | Complete |
+| UI-02 | Phase 8 | Complete |
+| UI-03 | Phase 8 | Complete |
+| UI-04 | Phase 8 | Complete |
+| UI-05 | Phase 8 | Complete |
 | MAINT-01 | Phase 7 | Complete |
 | MAINT-02 | Phase 7 | Complete |
 | MAINT-03 | Phase 9 | Pending |
