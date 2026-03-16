@@ -256,7 +256,7 @@ describe('handleArgoEvent', () => {
     expect(result.statusCode).toBe(200);
     expect(mockRequestJira).toHaveBeenCalledTimes(1);
     expect(mockLogEvent).toHaveBeenCalledTimes(1);
-    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argo', statusCode: 200 }));
+    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argocd', statusCode: 200 }));
   });
 
   test('returns 502 when Jira API fails', async () => {
@@ -269,7 +269,7 @@ describe('handleArgoEvent', () => {
     const event = makeArgoEvent(body);
     const result = await handleArgoEvent(event);
     expect(result.statusCode).toBe(502);
-    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argo', statusCode: 502 }));
+    expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argocd', statusCode: 502 }));
   });
 
   test('logs event even when logEvent throws', async () => {

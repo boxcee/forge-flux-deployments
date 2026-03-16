@@ -242,8 +242,8 @@ describe('resolver', () => {
   describe('getEventStats', () => {
     test('returns stats with source filter', async () => {
       mockGetStats.mockResolvedValue({ accepted: 10, failed: 2, skipped: 5 });
-      const result = await invoke('getEventStats', { source: 'argo' });
-      expect(mockGetStats).toHaveBeenCalledWith({ source: 'argo' });
+      const result = await invoke('getEventStats', { source: 'argocd' });
+      expect(mockGetStats).toHaveBeenCalledWith({ source: 'argocd' });
       expect(result).toEqual({ accepted: 10, failed: 2, skipped: 5 });
     });
 
