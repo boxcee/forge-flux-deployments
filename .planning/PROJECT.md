@@ -27,7 +27,11 @@ Customers can install the app and configure their webhook secrets entirely throu
 
 ### Active
 
-(None — define with next milestone)
+- [ ] SQL-backed webhook event log with per-invocation recording — v1.2
+- [ ] Admin page Event Log tab with stats strip and filterable table — v1.2
+- [ ] Scheduled trigger for 30-day log retention cleanup — v1.2
+- [ ] CHANGELOG.md tracking releases — v1.2
+- [ ] Version bump to 1.2.0 in package.json — v1.2
 
 ### Out of Scope
 
@@ -74,5 +78,9 @@ Docs site: `https://boxcee.github.io/forge-flux-deployments/`
 | Combined admin page + handler migration | Neither is useful alone — single phase | ✓ Good |
 | forge variables set as developer fallback | Not removed; storage.js env fallback supports it | ✓ Good |
 
+| Forge SQL for event log | Queryable storage, proper indexing, unlimited rows — right tool for a log | — Pending |
+| Keyset pagination over OFFSET | Correct under concurrent writes, no skipped/duplicate rows | — Pending |
+| Awaited log writes with swallowed errors | Ensures write completes before Forge runtime reclaims context | — Pending |
+
 ---
-*Last updated: 2026-03-12 after v1.1 milestone*
+*Last updated: 2026-03-16 after v1.2 milestone start*
