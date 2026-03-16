@@ -64,26 +64,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOG-01 | — | Pending |
-| LOG-02 | — | Pending |
-| LOG-03 | — | Pending |
-| LOG-04 | — | Pending |
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
-| UI-05 | — | Pending |
-| MAINT-01 | — | Pending |
-| MAINT-02 | — | Pending |
-| MAINT-03 | — | Pending |
-| HK-01 | — | Pending |
-| HK-02 | — | Pending |
+| LOG-01 | Phase 7 | Pending |
+| LOG-02 | Phase 7 | Pending |
+| LOG-03 | Phase 7 | Pending |
+| LOG-04 | Phase 7 | Pending |
+| UI-01 | Phase 8 | Pending |
+| UI-02 | Phase 8 | Pending |
+| UI-03 | Phase 8 | Pending |
+| UI-04 | Phase 8 | Pending |
+| UI-05 | Phase 8 | Pending |
+| MAINT-01 | Phase 7 | Pending |
+| MAINT-02 | Phase 7 | Pending |
+| MAINT-03 | Phase 9 | Pending |
+| HK-01 | Phase 9 | Pending |
+| HK-02 | Phase 9 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-16*
-*Last updated: 2026-03-16 after initial definition*
+*Last updated: 2026-03-16 — traceability updated after roadmap creation*
