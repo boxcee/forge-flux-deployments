@@ -3,6 +3,7 @@ import ForgeReconciler, {
   Form, FormHeader, FormSection, FormFooter,
   Label, Textfield, Button, useForm,
   SectionMessage, Stack, Text, Heading,
+  Tabs, Tab, TabList, TabPanel,
 } from '@forge/react';
 import { invoke } from '@forge/bridge';
 
@@ -10,6 +11,7 @@ const App = () => {
   const [status, setStatus] = useState(null);
   const [urls, setUrls] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     invoke('getConfigStatus')
@@ -54,53 +56,65 @@ const App = () => {
   return (
     <Stack space="space.300">
       <Heading as="h2">GitOps Deployments Configuration</Heading>
+      <Tabs onChange={setActiveTab} selected={activeTab} id="admin-tabs">
+        <TabList>
+          <Tab>Settings</Tab>
+          <Tab>Event Log</Tab>
+        </TabList>
+        <TabPanel>
+          <Stack space="space.300">
+            {feedback && (
+              <SectionMessage appearance={feedback.type === 'success' ? 'success' : 'error'}>
+                <Text>{feedback.msg}</Text>
+              </SectionMessage>
+            )}
 
-      {feedback && (
-        <SectionMessage appearance={feedback.type === 'success' ? 'success' : 'error'}>
-          <Text>{feedback.msg}</Text>
-        </SectionMessage>
-      )}
+            {urls && (
+              <SectionMessage appearance="information">
+                <Text>FluxCD webhook URL: {urls.flux}</Text>
+                <Text>ArgoCD webhook URL: {urls.argocd}</Text>
+              </SectionMessage>
+            )}
 
-      {urls && (
-        <SectionMessage appearance="information">
-          <Text>FluxCD webhook URL: {urls.flux}</Text>
-          <Text>ArgoCD webhook URL: {urls.argocd}</Text>
-        </SectionMessage>
-      )}
+            <Form onSubmit={fluxForm.handleSubmit(saveFlux)}>
+              <FormHeader title="FluxCD HMAC Secret" />
+              <FormSection>
+                <Label labelFor={fluxForm.getFieldId('fluxSecret')}>
+                  Webhook Secret {status?.flux?.configured ? '(configured)' : '(not configured)'}
+                </Label>
+                <Textfield
+                  type="password"
+                  placeholder={status?.flux?.configured ? '••••••••••• (secret is set — enter new value to replace)' : 'Enter HMAC secret (min 8 characters)'}
+                  {...fluxForm.register('fluxSecret', { required: true, minLength: 8 })}
+                />
+              </FormSection>
+              <FormFooter>
+                <Button appearance="primary" type="submit">Save FluxCD Secret</Button>
+              </FormFooter>
+            </Form>
 
-      <Form onSubmit={fluxForm.handleSubmit(saveFlux)}>
-        <FormHeader title="FluxCD HMAC Secret" />
-        <FormSection>
-          <Label labelFor={fluxForm.getFieldId('fluxSecret')}>
-            Webhook Secret {status?.flux?.configured ? '(configured)' : '(not configured)'}
-          </Label>
-          <Textfield
-            type="password"
-            placeholder={status?.flux?.configured ? '••••••••••• (secret is set — enter new value to replace)' : 'Enter HMAC secret (min 8 characters)'}
-            {...fluxForm.register('fluxSecret', { required: true, minLength: 8 })}
-          />
-        </FormSection>
-        <FormFooter>
-          <Button appearance="primary" type="submit">Save FluxCD Secret</Button>
-        </FormFooter>
-      </Form>
-
-      <Form onSubmit={argoForm.handleSubmit(saveArgo)}>
-        <FormHeader title="ArgoCD Bearer Token" />
-        <FormSection>
-          <Label labelFor={argoForm.getFieldId('argoToken')}>
-            Bearer Token {status?.argocd?.configured ? '(configured)' : '(not configured)'}
-          </Label>
-          <Textfield
-            type="password"
-            placeholder={status?.argocd?.configured ? '••••••••••• (token is set — enter new value to replace)' : 'Enter bearer token (min 8 characters)'}
-            {...argoForm.register('argoToken', { required: true, minLength: 8 })}
-          />
-        </FormSection>
-        <FormFooter>
-          <Button appearance="primary" type="submit">Save ArgoCD Token</Button>
-        </FormFooter>
-      </Form>
+            <Form onSubmit={argoForm.handleSubmit(saveArgo)}>
+              <FormHeader title="ArgoCD Bearer Token" />
+              <FormSection>
+                <Label labelFor={argoForm.getFieldId('argoToken')}>
+                  Bearer Token {status?.argocd?.configured ? '(configured)' : '(not configured)'}
+                </Label>
+                <Textfield
+                  type="password"
+                  placeholder={status?.argocd?.configured ? '••••••••••• (token is set — enter new value to replace)' : 'Enter bearer token (min 8 characters)'}
+                  {...argoForm.register('argoToken', { required: true, minLength: 8 })}
+                />
+              </FormSection>
+              <FormFooter>
+                <Button appearance="primary" type="submit">Save ArgoCD Token</Button>
+              </FormFooter>
+            </Form>
+          </Stack>
+        </TabPanel>
+        <TabPanel>
+          <Text>Event Log coming soon</Text>
+        </TabPanel>
+      </Tabs>
     </Stack>
   );
 };
