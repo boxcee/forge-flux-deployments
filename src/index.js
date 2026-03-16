@@ -118,7 +118,7 @@ export const handleFluxEvent = async (event) => {
 };
 
 export const handleArgoEvent = async (event) => {
-  const logParams = { source: 'argo' };
+  const logParams = { source: 'argocd' };
 
   // 1. Get token from storage
   const authHeader = (event.headers?.['authorization'] ?? [])[0];
