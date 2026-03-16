@@ -68,7 +68,10 @@ Plans:
   3. Selecting Flux or Argo from the source filter updates both the stats strip and the event table
   4. The event table loads 25 rows and a "Load more" button appends the next page without a full reload
   5. Status code badges are visually distinct: 200 green, 204 grey, 4xx/5xx red
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — Tabbed layout, stats strip, filterable table, keyset pagination
 
 ### Phase 9: Release Wrap-up
 **Goal**: v1.2 is documented and versioned for release
@@ -91,5 +94,5 @@ Plans:
 | 5. Admin Page & Storage Migration | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Documentation Update | v1.1 | 1/1 | Complete | 2026-03-12 |
 | 7. Event Log Backend | v1.2 | 0/2 | Planning | - |
-| 8. Admin UI — Event Log Tab | v1.2 | 0/? | Not started | - |
+| 8. Admin UI — Event Log Tab | v1.2 | 0/1 | Planning | - |
 | 9. Release Wrap-up | v1.2 | 0/? | Not started | - |
