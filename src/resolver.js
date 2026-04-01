@@ -1,4 +1,6 @@
-import Resolver from '@forge/resolver';
+import ResolverModule from '@forge/resolver';
+
+const Resolver = ResolverModule.default || ResolverModule;
 import { webTrigger } from '@forge/api';
 import {
   getConfigStatus as storageGetConfigStatus,
