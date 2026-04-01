@@ -5,7 +5,7 @@ milestone_name: Webhook Event Log
 status: archived
 stopped_at: Milestone v1.2 archived
 last_updated: "2026-03-16T20:45:00.000Z"
-last_activity: 2026-03-16 — Milestone v1.2 archived
+last_activity: 2026-04-01 - Completed quick task 260401-uvh: Fix out is not a constructor error on admin config page
 progress:
   total_phases: 4
   completed_phases: 4
@@ -38,3 +38,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 
 - `sql:read`/`sql:write` scopes will trigger re-consent for existing installations
 - KYC/KYB verification blocks actual Marketplace submission (manual portal process)
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260401-uvh | Fix out is not a constructor error on admin config page | 2026-04-01 | 3946a17 | [260401-uvh-fix-out-is-not-a-constructor-error-on-ad](./quick/260401-uvh-fix-out-is-not-a-constructor-error-on-ad/) |
