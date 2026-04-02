@@ -17,6 +17,7 @@ node --experimental-vm-modules node_modules/.bin/jest --watch     # watch mode
 npm run lint                                             # ESLint (src/ only)
 forge deploy --environment development                   # deploy to Forge
 forge tunnel                                             # live debug with tunnel
+forge logs --environment development                    # tail live function logs
 ```
 
 ## Architecture
@@ -79,6 +80,7 @@ Use the admin page to monitor webhook health and debug failures.
 
 ## Key Conventions
 
+- **One deployment record per upgrade** — Every `UpgradeSucceeded` event creates a new deployment record in Jira. Two Helm upgrades = two records. This is correct; Jira tracks deployment history, not just current state.
 - **ESM only** — `"type": "module"` in package.json. All imports use `.js` extensions.
 - **Forge manifest** — `manifest.yml` defines both webtrigger keys, function mappings, the admin page resource, and the DevOps deployment provider registration.
 - **Deterministic deployment IDs** — `shared.js` derives each deployment's sequence number via SHA-256 of `name:namespace:version:timestamp`. Jira uses this for deduplication. Do not change this logic without understanding the implications.
@@ -114,6 +116,7 @@ Use the admin page to monitor webhook health and debug failures.
 
 ## Forge Tunnel & Deploy Gotchas
 
+- **Flux Alert `namespace: '*'` unsupported** — When configuring a FluxCD `Alert` to watch HelmReleases across namespaces, `namespace: '*'` silently fails (events are discarded). Use the explicit namespace instead: `namespace: default`.
 - **`forge tunnel` registers a persistent tunnel URL** with the Forge platform. Even after stopping the tunnel, the platform keeps routing the resource iframe to `localhost:800x`. The admin page will not load without an active tunnel in development until a clean `forge deploy` clears the registration.
 - **Always `forge deploy` before `forge tunnel`** when adding new manifest modules. The tunnel can only override already-registered functions; new ones added only in the tunnel won't be found (404).
 - **`@forge/resolver` ESM interop (fixed)** — The package exports CJS. `resolver.js` imports it as `import ResolverModule from '@forge/resolver'` then uses `const Resolver = ResolverModule.default || ResolverModule` to handle both CJS and ESM correctly.

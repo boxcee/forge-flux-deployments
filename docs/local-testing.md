@@ -325,6 +325,8 @@ To fire another event without changing the chart version:
 flux reconcile helmrelease podinfo -n default
 ```
 
+> **Expected behavior:** Each Helm upgrade fires one webhook and creates one deployment record in Jira. If you trigger two upgrades, you'll see two records — this is correct. Jira tracks deployment history, not just current state.
+
 ### Clean up
 
 ```bash
