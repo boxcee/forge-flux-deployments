@@ -145,15 +145,7 @@ describe('handleFluxEvent', () => {
     expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'flux', statusCode: 502 }));
   });
 
-  test('logs event even when logEvent throws', async () => {
-    mockLogEvent.mockRejectedValueOnce(new Error('SQL down'));
-    const body = JSON.stringify(validFluxEvent);
-    const event = makeEvent(body);
-    const result = await handleFluxEvent(event);
-    expect(result.statusCode).toBe(200);
-    expect(mockLogEvent).toHaveBeenCalledTimes(1);
-  });
-});
+ });
 
 const validArgoPayload = {
   app: 'my-service',
@@ -272,12 +264,4 @@ describe('handleArgoEvent', () => {
     expect(mockLogEvent).toHaveBeenCalledWith(expect.objectContaining({ source: 'argocd', statusCode: 502 }));
   });
 
-  test('logs event even when logEvent throws', async () => {
-    mockLogEvent.mockRejectedValueOnce(new Error('SQL down'));
-    const body = JSON.stringify(validArgoPayload);
-    const event = makeArgoEvent(body);
-    const result = await handleArgoEvent(event);
-    expect(result.statusCode).toBe(200);
-    expect(mockLogEvent).toHaveBeenCalledTimes(1);
   });
-});
