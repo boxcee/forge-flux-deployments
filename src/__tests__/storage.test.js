@@ -170,5 +170,16 @@ describe('storage', () => {
         argocd: { configured: false },
       });
     });
+
+    test('returns configured: false when secret is empty string from env fallback', async () => {
+      mockGetSecret.mockResolvedValue(undefined);
+      process.env.WEBHOOK_SECRET = '';
+      process.env.ARGOCD_WEBHOOK_TOKEN = '';
+      const status = await getConfigStatus();
+      expect(status).toEqual({
+        flux: { configured: false },
+        argocd: { configured: false },
+      });
+    });
   });
 });
