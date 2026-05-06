@@ -56,8 +56,8 @@ permissions:
     - write:deployment:jira-software
     - read:deployment:jira-software
     - storage:app
-    - 'sql:read'
-    - 'sql:write'
+    - sql:read
+    - sql:write
 
 app:
   runtime:
