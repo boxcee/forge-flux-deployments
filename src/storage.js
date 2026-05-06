@@ -37,7 +37,7 @@ export async function getConfigStatus() {
   const fluxSecret = await getFluxSecret();
   const argoSecret = await getArgoSecret();
   return {
-    flux: { configured: fluxSecret !== undefined },
-    argocd: { configured: argoSecret !== undefined },
+    flux: { configured: !!fluxSecret },
+    argocd: { configured: !!argoSecret },
   };
 }
