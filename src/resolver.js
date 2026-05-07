@@ -33,19 +33,19 @@ function validateString(value, label) {
   if (trimmed.length < 8) {
     return { success: false, error: `${label} must be at least 8 characters` };
   }
-  return { valid: true, trimmed };
+  return { success: true, trimmed };
 }
 
 resolver.define('setFluxSecret', async ({ payload }) => {
   const check = validateString(payload.secret, 'Secret');
-  if (!check.valid) return check;
+  if (!check.success) return check;
   await storageSetFluxSecret(check.trimmed);
   return { success: true };
 });
 
 resolver.define('setArgoSecret', async ({ payload }) => {
   const check = validateString(payload.token, 'Token');
-  if (!check.valid) return check;
+  if (!check.success) return check;
   await storageSetArgoSecret(check.trimmed);
   return { success: true };
 });
