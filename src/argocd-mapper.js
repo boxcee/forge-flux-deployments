@@ -7,6 +7,8 @@ const PHASE_TO_STATE = {
   Running: 'in_progress',
 };
 
+export const IGNORED_PHASES = new Set(['Running']);
+
 export function mapPhaseToState(phase) {
   return PHASE_TO_STATE[phase] ?? 'unknown';
 }

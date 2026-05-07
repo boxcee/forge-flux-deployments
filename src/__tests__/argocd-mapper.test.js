@@ -3,6 +3,7 @@ import {
   mapPhaseToState,
   extractMetadata,
   buildDeploymentPayload,
+  IGNORED_PHASES,
 } from '../argocd-mapper.js';
 
 describe('mapPhaseToState', () => {
@@ -15,6 +16,18 @@ describe('mapPhaseToState', () => {
     ['SomethingNew', 'unknown'],
   ])('maps phase=%s to %s', (phase, expected) => {
     expect(mapPhaseToState(phase)).toBe(expected);
+  });
+});
+
+describe('IGNORED_PHASES', () => {
+  test('contains Running', () => {
+    expect(IGNORED_PHASES.has('Running')).toBe(true);
+  });
+
+  test('does not contain Succeeded, Failed, or Error', () => {
+    expect(IGNORED_PHASES.has('Succeeded')).toBe(false);
+    expect(IGNORED_PHASES.has('Failed')).toBe(false);
+    expect(IGNORED_PHASES.has('Error')).toBe(false);
   });
 });
 
@@ -120,7 +133,7 @@ describe('buildDeploymentPayload', () => {
     expect(result).toHaveProperty('providerMetadata.product', 'ArgoCD');
   });
 
-  test('sets state from phase and health', () => {
+  test('sets state from phase', () => {
     const result = buildDeploymentPayload(argoPayload);
     expect(result.deployments[0].state).toBe('successful');
   });

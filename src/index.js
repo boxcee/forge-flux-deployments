@@ -2,7 +2,7 @@ import { verifyHmac } from './hmac.js';
 import { extractMetadata, buildDeploymentPayload, IGNORED_REASONS } from './mapper.js';
 import { submitDeployment } from './jira.js';
 import { verifyBearerToken } from './bearer.js';
-import { extractMetadata as extractArgoMetadata, buildDeploymentPayload as buildArgoPayload } from './argocd-mapper.js';
+import { extractMetadata as extractArgoMetadata, buildDeploymentPayload as buildArgoPayload, IGNORED_PHASES } from './argocd-mapper.js';
 import { getFluxSecret, getArgoSecret } from './storage.js';
 import { logEvent } from './event-log.js';
 
@@ -174,7 +174,17 @@ export const handleArgoEvent = async (event) => {
     return { statusCode: 400, body: 'Missing env annotation' };
   }
 
-  // 6. Build and submit
+  // 6. Check phase — ignore Running (defense-in-depth; notification config
+  //    already filters it, but handler-level filter protects against config
+  //    changes, matching FluxCD's IGNORED_REASONS pattern)
+  if (IGNORED_PHASES.has(argoEvent.phase)) {
+    console.info('Ignored phase', { phase: argoEvent.phase });
+    logParams.statusCode = 204;
+    try { await logEvent(logParams); } catch { /* swallow */ }
+    return { statusCode: 204, body: '' };
+  }
+
+  // 7. Build and submit
   const payload = buildArgoPayload(argoEvent, meta);
   logParams.deploymentState = payload.deployments[0]?.state;
 

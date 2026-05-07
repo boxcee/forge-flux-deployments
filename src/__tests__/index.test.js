@@ -249,6 +249,14 @@ describe('handleArgoEvent', () => {
     expect(result.statusCode).toBe(400);
   });
 
+  test('returns 204 for ignored phases (Running)', async () => {
+    const running = { ...validArgoPayload, phase: 'Running', healthStatus: 'Progressing' };
+    const body = JSON.stringify(running);
+    const event = makeArgoEvent(body);
+    const result = await handleArgoEvent(event);
+    expect(result.statusCode).toBe(204);
+  });
+
   test('returns 200 and calls Jira API on valid event', async () => {
     const body = JSON.stringify(validArgoPayload);
     const event = makeArgoEvent(body);
