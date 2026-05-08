@@ -7,7 +7,7 @@ const PHASE_TO_STATE = {
   Running: 'in_progress',
 };
 
-export function mapPhaseToState(phase, _healthStatus) {
+export function mapPhaseToState(phase) {
   return PHASE_TO_STATE[phase] ?? 'unknown';
 }
 
@@ -27,7 +27,7 @@ export function extractMetadata(payload) {
 
 export function buildDeploymentPayload(argoPayload, meta) {
   if (!meta) meta = extractMetadata(argoPayload);
-  const state = mapPhaseToState(argoPayload.phase, argoPayload.healthStatus);
+  const state = mapPhaseToState(argoPayload.phase);
   const shortRevision = (meta.revision ?? 'unknown').substring(0, 7);
 
   const seqNum = deterministicId(

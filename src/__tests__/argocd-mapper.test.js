@@ -7,18 +7,14 @@ import {
 
 describe('mapPhaseToState', () => {
   test.each([
-    ['Succeeded', 'Healthy', 'successful'],
-    ['Succeeded', 'Degraded', 'successful'],
-    ['Failed', 'Degraded', 'failed'],
-    ['Failed', 'Healthy', 'failed'],
-    ['Error', 'Degraded', 'failed'],
-    ['Error', 'Unknown', 'failed'],
-    ['Running', 'Progressing', 'in_progress'],
-    ['Running', 'Healthy', 'in_progress'],
-    ['', 'Unknown', 'unknown'],
-    ['SomethingNew', 'Healthy', 'unknown'],
-  ])('maps phase=%s health=%s to %s', (phase, health, expected) => {
-    expect(mapPhaseToState(phase, health)).toBe(expected);
+    ['Succeeded', 'successful'],
+    ['Failed', 'failed'],
+    ['Error', 'failed'],
+    ['Running', 'in_progress'],
+    ['', 'unknown'],
+    ['SomethingNew', 'unknown'],
+  ])('maps phase=%s to %s', (phase, expected) => {
+    expect(mapPhaseToState(phase)).toBe(expected);
   });
 });
 
