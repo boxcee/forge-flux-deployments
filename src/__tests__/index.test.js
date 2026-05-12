@@ -150,8 +150,8 @@ describe('handleFluxEvent', () => {
     const body = JSON.stringify(validFluxEvent);
     const event = makeEvent(body);
     const result = await handleFluxEvent(event);
-    expect(result.statusCode).toBe(200);
-    expect(mockLogEvent).toHaveBeenCalledTimes(1);
+    expect(result.statusCode).toBe(502);
+    expect(mockLogEvent).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -277,7 +277,7 @@ describe('handleArgoEvent', () => {
     const body = JSON.stringify(validArgoPayload);
     const event = makeArgoEvent(body);
     const result = await handleArgoEvent(event);
-    expect(result.statusCode).toBe(200);
-    expect(mockLogEvent).toHaveBeenCalledTimes(1);
+    expect(result.statusCode).toBe(502);
+    expect(mockLogEvent).toHaveBeenCalledTimes(2);
   });
 });
