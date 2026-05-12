@@ -85,6 +85,7 @@ Use the admin page to monitor webhook health and debug failures.
 - **Forge manifest** — `manifest.yml` defines both webtrigger keys, function mappings, the admin page resource, and the DevOps deployment provider registration.
 - **Deterministic deployment IDs** — `shared.js` derives each deployment's sequence number via SHA-256 of `name:namespace:version:timestamp`. Jira uses this for deduplication. Do not change this logic without understanding the implications.
 - **Ignored reasons** — FluxCD: `UninstallSucceeded` and `DependencyNotReady` are silently skipped (204). ArgoCD: only `Succeeded`, `Failed`, and `Error` phases are processed.
+- **ArgoCD phase mapping** — `argocd-mapper.js` maps `Succeeded → successful`, `Failed → failed`, `Error → failed`, and `Running → in_progress`. The current ArgoCD notifications config (`test/argocd/notifications-cm.yaml`) only fires triggers on `Succeeded`, `Failed`, and `Error`. The `Running → in_progress` mapping is kept as a safety net — if a `Running` trigger is added later, the mapping is already in place. No explicit filtering of `Running` is needed.
 - **Secret storage** — `storage.js` reads from `@forge/kvs` first, then falls back to env vars. Use env vars for local testing; KVS is the production path set via the admin page.
 
 ## HelmRelease / ArgoApp Annotations
