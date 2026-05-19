@@ -1,6 +1,33 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "extends": ["config:recommended"],
+  "schedule": ["every weekend"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "labels": ["dependencies"]
+    },
+    {
+      "matchPackagePatterns": ["^@forge/"],
+      "groupName": "Atlassian Forge packages",
+      "matchUpdateTypes": ["major", "minor"],
+      "automerge": false,
+      "labels": ["forge", "dependencies"]
+    },
+    {
+      "matchPackageNames": ["react"],
+      "automerge": false,
+      "labels": ["dependencies"]
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "automergeType": "pr",
+      "labels": ["dev-dependencies"]
+    }
   ]
 }
