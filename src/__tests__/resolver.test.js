@@ -29,16 +29,15 @@ jest.unstable_mockModule('@forge/api', () => ({
   webTrigger: { getUrl: mockGetUrl },
 }));
 
-// Mock @forge/resolver — capture define() calls
+// Mock @forge/resolver — capture handlers passed to makeResolver
 const handlers = {};
-const mockDefine = jest.fn((key, fn) => { handlers[key] = fn; });
-jest.unstable_mockModule('@forge/resolver', () => {
-  const MockResolver = function () {
-    this.define = mockDefine;
-    this.getDefinitions = () => 'resolver-definitions';
-  };
-  return { default: MockResolver };
+const mockMakeResolver = jest.fn((handlerMap) => {
+  Object.assign(handlers, handlerMap);
+  return 'resolver-definitions';
 });
+jest.unstable_mockModule('@forge/resolver', () => ({
+  makeResolver: mockMakeResolver,
+}));
 
 // Import resolver (triggers define() calls)
 const { handler } = await import('../resolver.js');
