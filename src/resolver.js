@@ -1,6 +1,4 @@
-import ResolverModule from '@forge/resolver';
-
-const Resolver = ResolverModule.default || ResolverModule;
+import { makeResolver } from '@forge/resolver';
 import { webTrigger } from '@forge/api';
 import {
   getConfigStatus as storageGetConfigStatus,
@@ -10,20 +8,6 @@ import {
   deleteArgoSecret as storageDeleteArgoSecret,
 } from './storage.js';
 import { getEvents, getStats } from './event-log.js';
-
-const resolver = new Resolver();
-
-resolver.define('getConfigStatus', async () => {
-  return await storageGetConfigStatus();
-});
-
-resolver.define('getWebtriggerUrls', async () => {
-  const [flux, argocd] = await Promise.all([
-    webTrigger.getUrl('flux-webhook'),
-    webTrigger.getUrl('argo-webhook'),
-  ]);
-  return { flux, argocd };
-});
 
 function validateString(value, label) {
   if (typeof value !== 'string' || value === '') {
@@ -36,44 +20,56 @@ function validateString(value, label) {
   return { success: true, trimmed };
 }
 
-resolver.define('setFluxSecret', async ({ payload }) => {
-  const check = validateString(payload.secret, 'Secret');
-  if (!check.success) return check;
-  await storageSetFluxSecret(check.trimmed);
-  return { success: true };
-});
+export const handler = makeResolver({
+  getConfigStatus: async () => {
+    return await storageGetConfigStatus();
+  },
 
-resolver.define('setArgoSecret', async ({ payload }) => {
-  const check = validateString(payload.token, 'Token');
-  if (!check.success) return check;
-  await storageSetArgoSecret(check.trimmed);
-  return { success: true };
-});
+  getWebtriggerUrls: async () => {
+    const [flux, argocd] = await Promise.all([
+      webTrigger.getUrl('flux-webhook'),
+      webTrigger.getUrl('argo-webhook'),
+    ]);
+    return { flux, argocd };
+  },
 
-resolver.define('deleteFluxSecret', async () => {
-  await storageDeleteFluxSecret();
-  return { success: true };
-});
+  setFluxSecret: async ({ payload }) => {
+    const check = validateString(payload.secret, 'Secret');
+    if (!check.success) return check;
+    await storageSetFluxSecret(check.trimmed);
+    return { success: true };
+  },
 
-resolver.define('deleteArgoSecret', async () => {
-  await storageDeleteArgoSecret();
-  return { success: true };
-});
+  setArgoSecret: async ({ payload }) => {
+    const check = validateString(payload.token, 'Token');
+    if (!check.success) return check;
+    await storageSetArgoSecret(check.trimmed);
+    return { success: true };
+  },
 
-resolver.define('getEventLog', async ({ payload }) => {
-  const { source, beforeTimestamp, beforeId } = payload ?? {};
-  return await getEvents({
-    source: source || undefined,
-    beforeTimestamp: beforeTimestamp || undefined,
-    beforeId: beforeId ? Number(beforeId) : undefined,
-  });
-});
+  deleteFluxSecret: async () => {
+    await storageDeleteFluxSecret();
+    return { success: true };
+  },
 
-resolver.define('getEventStats', async ({ payload }) => {
-  const { source } = payload ?? {};
-  return await getStats({
-    source: source || undefined,
-  });
-});
+  deleteArgoSecret: async () => {
+    await storageDeleteArgoSecret();
+    return { success: true };
+  },
 
-export const handler = resolver.getDefinitions();
+  getEventLog: async ({ payload }) => {
+    const { source, beforeTimestamp, beforeId } = payload ?? {};
+    return await getEvents({
+      source: source || undefined,
+      beforeTimestamp: beforeTimestamp || undefined,
+      beforeId: beforeId ? Number(beforeId) : undefined,
+    });
+  },
+
+  getEventStats: async ({ payload }) => {
+    const { source } = payload ?? {};
+    return await getStats({
+      source: source || undefined,
+    });
+  },
+});
