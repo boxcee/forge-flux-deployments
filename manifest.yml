@@ -8,7 +8,6 @@ modules:
       function: handleArgoEvent
       response:
         type: dynamic
-
   devops:deploymentInfoProvider:
     - key: flux-deployment-provider
       name:
@@ -22,7 +21,6 @@ modules:
       homeUrl: https://argoproj.github.io/cd/
       logoUrl: https://raw.githubusercontent.com/argoproj/argo-cd/master/docs/assets/logo.png
       documentationUrl: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/
-
   function:
     - key: handleFluxEvent
       handler: index.handleFluxEvent
@@ -32,7 +30,6 @@ modules:
       handler: resolver.handler
     - key: cleanupOldEvents
       handler: event-log.cleanupHandler
-
   jira:adminPage:
     - key: admin-config-page
       resource: admin-page
@@ -40,11 +37,13 @@ modules:
         function: resolver
       render: native
       title: GitOps Deployments
-
   scheduledTrigger:
     - key: daily-event-cleanup
       function: cleanupOldEvents
-      interval: DAILY
+      interval: day
+  sql:
+    - key: db
+      engine: mysql
 
 resources:
   - key: admin-page
@@ -56,8 +55,6 @@ permissions:
     - write:deployment:jira-software
     - read:deployment:jira-software
     - storage:app
-    - sql:read
-    - sql:write
 
 app:
   runtime:
