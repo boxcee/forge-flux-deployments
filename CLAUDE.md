@@ -15,6 +15,7 @@ node --experimental-vm-modules node_modules/.bin/jest --testPathPattern='<patter
 node --experimental-vm-modules node_modules/.bin/jest --coverage  # run with coverage
 node --experimental-vm-modules node_modules/.bin/jest --watch     # watch mode
 npm run lint                                             # ESLint (src/ only)
+npx @forge/cli@12 lint                                   # Forge manifest/code linter (run before deploy)
 forge deploy --environment development                   # deploy to Forge
 forge tunnel                                             # live debug with tunnel
 forge logs --environment development                    # tail live function logs
@@ -120,5 +121,8 @@ Use the admin page to monitor webhook health and debug failures.
 - **Flux Alert `namespace: '*'` unsupported** — When configuring a FluxCD `Alert` to watch HelmReleases across namespaces, `namespace: '*'` silently fails (events are discarded). Use the explicit namespace instead: `namespace: default`.
 - **`forge tunnel` registers a persistent tunnel URL** with the Forge platform. Even after stopping the tunnel, the platform keeps routing the resource iframe to `localhost:800x`. The admin page will not load without an active tunnel in development until a clean `forge deploy` clears the registration.
 - **Always `forge deploy` before `forge tunnel`** when adding new manifest modules. The tunnel can only override already-registered functions; new ones added only in the tunnel won't be found (404).
-- **`@forge/resolver` ESM interop (fixed)** — The package exports CJS. `resolver.js` imports it as `import ResolverModule from '@forge/resolver'` then uses `const Resolver = ResolverModule.default || ResolverModule` to handle both CJS and ESM correctly.
+- **`@forge/resolver` — use `makeResolver`** — With `"type": "module"`, the default import interop is unreliable in the Forge runtime (produces "out is not a constructor"). Always use `import { makeResolver } from '@forge/resolver'` and pass a handler map directly.
+- **Forge lint before deploy** — `forge deploy` runs `forge lint` first and will hard-fail on errors. Run `npx @forge/cli@12 lint` locally before pushing. `forge lint --fix` has a bug where it reports "No issues found" but silently leaves errors unfixed — don't trust it.
+- **`scheduledTrigger` manifest** — `interval` must be lowercase (`day`, not `DAILY`). The `sql` module must be declared under `modules:` when using `@forge/sql`; without it, the linter emits misleading errors about unrelated modules. `sql:read`/`sql:write` are not valid scopes — SQL access is granted by the module declaration alone.
+- **CI analytics setting** — `FORGE_USAGE_ANALYTICS` env var is ignored by the CLI. Add a step `forge settings set usage-analytics false` (with `FORGE_EMAIL`/`FORGE_API_TOKEN` env) before any `--non-interactive` deploy step.
 - **Admin page location** — `jira:adminPage` modules appear under Jira Settings → Apps (left sidebar), NOT in the app overview/manage apps page. URL pattern: `/jira/settings/apps/{appId}/{envId}`.
