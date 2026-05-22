@@ -14,6 +14,18 @@ This guide will help you connect your GitOps pipeline to Jira's native Deploymen
 - The **GitOps Deployments for Jira** app installed from the Atlassian Marketplace.
 - A Kubernetes cluster running **FluxCD** or **ArgoCD**.
 
+### Installing the app
+
+**From the Atlassian Marketplace:** Search for "GitOps Deployments for Jira" and click **Get it now**. Select your Jira site and confirm the scopes.
+
+**Via Forge CLI (developers):**
+
+```bash
+npx @forge/cli@12 install --site <your-site>.atlassian.net --product Jira --environment production
+```
+
+Run this after `forge deploy`. The CLI will prompt you to confirm the required scopes.
+
 ## 2. FluxCD Configuration
 
 ### A. Configure the webhook secret

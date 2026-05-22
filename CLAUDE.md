@@ -126,3 +126,5 @@ Use the admin page to monitor webhook health and debug failures.
 - **`scheduledTrigger` manifest** — `interval` must be lowercase (`day`, not `DAILY`). The `sql` module must be declared under `modules:` when using `@forge/sql`; without it, the linter emits misleading errors about unrelated modules. `sql:read`/`sql:write` are not valid scopes — SQL access is granted by the module declaration alone.
 - **CI analytics setting** — `FORGE_USAGE_ANALYTICS` env var is ignored by the CLI. Add a step `forge settings set usage-analytics false` (with `FORGE_EMAIL`/`FORGE_API_TOKEN` env) before any `--non-interactive` deploy step.
 - **Admin page location** — `jira:adminPage` modules appear under Jira Settings → Apps (left sidebar), NOT in the app overview/manage apps page. URL pattern: `/jira/settings/apps/{appId}/{envId}`.
+- **Listing installations** — `npx @forge/cli@12 install list` shows all sites, environments, versions, and status.
+- **`forge uninstall` requires a TTY** — Cannot be run non-interactively (no `--non-interactive` flag, rejects piped input). Hand off to the user: `! npx @forge/cli@12 uninstall --site <site> --environment <env>`.
