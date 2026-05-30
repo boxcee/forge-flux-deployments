@@ -31,34 +31,52 @@ async function submitAndRespond(payload) {
   return { response, counts };
 }
 
-export const handleFluxEvent = async (event) => {
-  const logParams = { source: 'flux' };
+/**
+ * Shared webhook event handler.
+ *
+ * Pipeline: get secret → verify auth → parse JSON → extract metadata
+ *          → check issue keys → check env → optional filter → build payload
+ *          → submit → log.
+ *
+ * @param {Object} event - The webhook event
+ * @param {Object} config - Provider-specific configuration
+ * @param {string} config.source - Source label ('flux' | 'argocd')
+ * @param {string} config.label - Display name for console warnings ('FluxCD' | 'ArgoCD')
+ * @param {Function} config.getSecret - Async function that returns the auth secret
+ * @param {Function} config.verifyAuth - (event, secret) → boolean
+ * @param {Function} config.extractMetadata - (parsedEvent) → metadata object
+ * @param {string} config.releaseNameField - Key in metadata for the release/app name
+ * @param {Function} config.buildPayload - (parsedEvent, meta) → deployment payload
+ * @param {Function} [config.filterEvent] - (parsedEvent) → { statusCode, body } | undefined
+ * @returns {Promise<Object>} The HTTP response
+ */
+async function handleWebhookEvent(event, { source, label, getSecret, verifyAuth, extractMetadata, releaseNameField, buildPayload, filterEvent }) {
+  const logParams = { source };
 
   // 1. Get secret from storage
-  const signature = (event.headers?.['x-signature'] ?? [])[0];
-  const secret = await getFluxSecret();
-
+  const secret = await getSecret();
   if (!secret) {
-    console.warn('FluxCD webhook secret not configured');
+    console.warn(`${label} webhook secret not configured`);
     logParams.statusCode = 503;
     logParams.error = 'Webhook secret not configured';
     await logEvent(logParams);
     return { statusCode: 503, body: 'Webhook secret not configured. Configure via app admin page.' };
   }
 
-  // 2. Verify HMAC
-  if (!verifyHmac(event.body, signature, secret)) {
-    console.warn('HMAC verification failed');
+  // 2. Verify auth
+  if (!verifyAuth(event, secret)) {
+    const authError = source === 'flux' ? 'HMAC verification failed' : 'Bearer token verification failed';
+    console.warn(authError);
     logParams.statusCode = 401;
-    logParams.error = 'HMAC verification failed';
+    logParams.error = authError;
     await logEvent(logParams);
     return { statusCode: 401, body: 'Unauthorized' };
   }
 
   // 3. Parse body
-  let fluxEvent;
+  let parsedEvent;
   try {
-    fluxEvent = JSON.parse(event.body);
+    parsedEvent = JSON.parse(event.body);
   } catch {
     logParams.statusCode = 400;
     logParams.error = 'Malformed JSON';
@@ -67,20 +85,21 @@ export const handleFluxEvent = async (event) => {
   }
 
   // 4. Extract metadata
-  const meta = extractMetadata(fluxEvent);
-  logParams.releaseName = meta.helmReleaseName;
+  const meta = extractMetadata(parsedEvent);
+  logParams.releaseName = meta[releaseNameField];
   logParams.namespace = meta.namespace;
   logParams.env = meta.env;
   logParams.issueKeys = meta.issueKeys;
 
+  // 5. Check issue keys
   if (!meta.issueKeys) {
-    console.info('No jira annotation — skipping', { name: meta.helmReleaseName });
+    console.info('No jira annotation — skipping', { name: meta[releaseNameField] });
     logParams.statusCode = 204;
     await logEvent(logParams);
     return { statusCode: 204, body: '' };
   }
 
-  // 5. Check environment
+  // 6. Check environment
   if (!meta.env) {
     logParams.statusCode = 400;
     logParams.error = 'Missing env annotation';
@@ -88,18 +107,22 @@ export const handleFluxEvent = async (event) => {
     return { statusCode: 400, body: 'Missing env annotation' };
   }
 
-  // 6. Check reason
-  if (IGNORED_REASONS.has(fluxEvent.reason)) {
-    console.info('Ignored reason', { reason: fluxEvent.reason });
-    logParams.statusCode = 204;
-    await logEvent(logParams);
-    return { statusCode: 204, body: '' };
+  // 7. Optional filter (e.g., ignored reasons for Flux)
+  if (filterEvent) {
+    const result = filterEvent(parsedEvent);
+    if (result) {
+      console.info('Ignored reason', { reason: parsedEvent.reason });
+      logParams.statusCode = result.statusCode;
+      await logEvent(logParams);
+      return result;
+    }
   }
 
-  // 7. Build and submit
-  const payload = buildDeploymentPayload(fluxEvent, meta);
+  // 8. Build payload
+  const payload = buildPayload(parsedEvent, meta);
   logParams.deploymentState = payload.deployments[0]?.state;
 
+  // 9. Submit and respond
   try {
     const { response, counts } = await submitAndRespond(payload);
     logParams.statusCode = 200;
@@ -115,82 +138,29 @@ export const handleFluxEvent = async (event) => {
     await logEvent(logParams);
     return { statusCode: 502, body: 'Upstream API error' };
   }
-};
+}
 
-export const handleArgoEvent = async (event) => {
-  const logParams = { source: 'argocd' };
+export const handleFluxEvent = async (event) =>
+  handleWebhookEvent(event, {
+    source: 'flux',
+    label: 'FluxCD',
+    getSecret: getFluxSecret,
+    verifyAuth: (event, secret) => verifyHmac(event.body, (event.headers?.['x-signature'] ?? [])[0], secret),
+    extractMetadata,
+    releaseNameField: 'helmReleaseName',
+    buildPayload: buildDeploymentPayload,
+    filterEvent: (event) => IGNORED_REASONS.has(event.reason)
+      ? { statusCode: 204, body: '' }
+      : undefined,
+  });
 
-  // 1. Get token from storage
-  const authHeader = (event.headers?.['authorization'] ?? [])[0];
-  const token = await getArgoSecret();
-
-  if (!token) {
-    console.warn('ArgoCD webhook token not configured');
-    logParams.statusCode = 503;
-    logParams.error = 'Webhook secret not configured';
-    await logEvent(logParams);
-    return { statusCode: 503, body: 'Webhook secret not configured. Configure via app admin page.' };
-  }
-
-  // 2. Verify bearer token
-  if (!verifyBearerToken(authHeader, token)) {
-    console.warn('Bearer token verification failed');
-    logParams.statusCode = 401;
-    logParams.error = 'Bearer token verification failed';
-    await logEvent(logParams);
-    return { statusCode: 401, body: 'Unauthorized' };
-  }
-
-  // 3. Parse body
-  let argoEvent;
-  try {
-    argoEvent = JSON.parse(event.body);
-  } catch {
-    logParams.statusCode = 400;
-    logParams.error = 'Malformed JSON';
-    await logEvent(logParams);
-    return { statusCode: 400, body: 'Malformed JSON' };
-  }
-
-  // 4. Extract metadata and check issue keys
-  const meta = extractArgoMetadata(argoEvent);
-  logParams.releaseName = meta.appName;
-  logParams.namespace = meta.namespace;
-  logParams.env = meta.env;
-  logParams.issueKeys = meta.issueKeys;
-
-  if (!meta.issueKeys) {
-    console.info('No jira annotation — skipping', { name: meta.appName });
-    logParams.statusCode = 204;
-    await logEvent(logParams);
-    return { statusCode: 204, body: '' };
-  }
-
-  // 5. Check environment
-  if (!meta.env) {
-    logParams.statusCode = 400;
-    logParams.error = 'Missing env annotation';
-    await logEvent(logParams);
-    return { statusCode: 400, body: 'Missing env annotation' };
-  }
-
-  // 6. Build and submit
-  const payload = buildArgoPayload(argoEvent, meta);
-  logParams.deploymentState = payload.deployments[0]?.state;
-
-  try {
-    const { response, counts } = await submitAndRespond(payload);
-    logParams.statusCode = 200;
-    logParams.accepted = counts.accepted;
-    logParams.rejected = counts.rejected;
-    logParams.unknownKeys = counts.unknownKeys;
-    await logEvent(logParams);
-    return response;
-  } catch (err) {
-    console.error('Jira API call failed', err.message);
-    logParams.statusCode = 502;
-    logParams.error = err.message;
-    await logEvent(logParams);
-    return { statusCode: 502, body: 'Upstream API error' };
-  }
-};
+export const handleArgoEvent = async (event) =>
+  handleWebhookEvent(event, {
+    source: 'argocd',
+    label: 'ArgoCD',
+    getSecret: getArgoSecret,
+    verifyAuth: (event, secret) => verifyBearerToken((event.headers?.['authorization'] ?? [])[0], secret),
+    extractMetadata: extractArgoMetadata,
+    releaseNameField: 'appName',
+    buildPayload: buildArgoPayload,
+  });
