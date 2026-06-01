@@ -11,7 +11,7 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "@forge/api": "^4.0.0",
+    "@forge/api": "^7.0.0",
     "@forge/bridge": "^5.14.0",
     "@forge/kvs": "^1.4.0",
     "@forge/sql": "^3.0.19",
