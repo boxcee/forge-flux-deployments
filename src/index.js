@@ -133,7 +133,6 @@ async function handleWebhookEvent(event, { source, getSecret, verifyAuth, extrac
 }
 
 export const handleFluxEvent = async (event) => {
-  const signature = (event.headers?.['x-signature'] ?? [])[0];
   return handleWebhookEvent(event, {
     source: 'flux',
     getSecret: () => getFluxSecret(),
