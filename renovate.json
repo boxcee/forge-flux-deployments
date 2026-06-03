@@ -2,32 +2,40 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "schedule": ["every weekend"],
+  "defaultLabels": ["dependencies"],
   "packageRules": [
     {
+      "description": "Automerge minor and patch updates for npm dependencies",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
-      "automergeType": "pr",
-      "labels": ["dependencies"]
+      "automergeType": "pr"
     },
     {
+      "description": "Group Atlassian Forge package updates (major + minor)",
       "matchPackagePatterns": ["^@forge/"],
       "groupName": "Atlassian Forge packages",
       "matchUpdateTypes": ["major", "minor"],
       "automerge": false,
-      "labels": ["forge", "dependencies"]
+      "labels": ["forge"]
     },
     {
+      "description": "Don't automerge React updates",
       "matchPackageNames": ["react"],
-      "automerge": false,
-      "labels": ["dependencies"]
+      "automerge": false
     },
     {
+      "description": "Automerge dev dependencies (minor + patch)",
       "matchManagers": ["npm"],
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "automergeType": "pr",
       "labels": ["dev-dependencies"]
+    },
+    {
+      "description": "Pin GitHub Actions to SHA for reproducibility",
+      "matchManagers": ["github-actions"],
+      "enabled": true
     }
   ]
 }
