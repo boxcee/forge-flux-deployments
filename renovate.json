@@ -9,7 +9,7 @@
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
-      "automergeType": "pr"
+      "automergeType": "branch"
     },
     {
       "description": "Group Atlassian Forge package updates (major + minor)",
@@ -29,7 +29,7 @@
       "matchManagers": ["npm"],
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "labels": ["dev-dependencies"]
     },
     {
