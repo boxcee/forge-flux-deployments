@@ -2,14 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "schedule": ["every weekend"],
-  "defaultLabels": ["dependencies"],
+  "labels": ["dependencies"],
   "packageRules": [
     {
-      "description": "Automerge minor and patch updates for npm dependencies",
-      "matchManagers": ["npm"],
+      "description": "Automerge minor and patch updates for all package managers",
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
-      "automergeType": "pr"
+      "automergeType": "branch"
     },
     {
       "description": "Group Atlassian Forge package updates (major + minor)",
@@ -25,11 +24,9 @@
       "automerge": false
     },
     {
-      "description": "Automerge dev dependencies (minor + patch)",
+      "description": "Label dev dependency updates",
       "matchManagers": ["npm"],
       "matchDepTypes": ["devDependencies"],
-      "automerge": true,
-      "automergeType": "pr",
       "labels": ["dev-dependencies"]
     },
     {
