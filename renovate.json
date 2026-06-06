@@ -5,8 +5,7 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
-      "description": "Automerge minor and patch updates for npm dependencies",
-      "matchManagers": ["npm"],
+      "description": "Automerge minor and patch updates for all package managers",
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "automergeType": "branch"
@@ -25,11 +24,9 @@
       "automerge": false
     },
     {
-      "description": "Automerge dev dependencies (minor + patch)",
+      "description": "Label dev dependency updates",
       "matchManagers": ["npm"],
       "matchDepTypes": ["devDependencies"],
-      "automerge": true,
-      "automergeType": "branch",
       "labels": ["dev-dependencies"]
     },
     {
