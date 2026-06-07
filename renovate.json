@@ -12,11 +12,13 @@
     },
     {
       "description": "Group Atlassian Forge package updates (major + minor)",
-      "matchPackagePatterns": ["^@forge/"],
       "groupName": "Atlassian Forge packages",
       "matchUpdateTypes": ["major", "minor"],
       "automerge": false,
-      "labels": ["forge"]
+      "labels": ["forge"],
+      "matchPackageNames": [
+        "/^@forge//"
+      ]
     },
     {
       "description": "Don't automerge React updates",
